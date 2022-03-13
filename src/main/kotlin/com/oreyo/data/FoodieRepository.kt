@@ -1,4 +1,8 @@
 package com.oreyo.data
 
-class FoodieRepository {
+import com.oreyo.data.database.DatabaseFactory
+
+class FoodieRepository(
+	private val dbFactory: DatabaseFactory
+) {
 }
