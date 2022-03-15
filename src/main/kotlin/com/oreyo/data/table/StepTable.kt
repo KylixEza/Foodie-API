@@ -7,5 +7,5 @@ object StepTable: Table() {
     override val tableName: String = "step"
 
     val menuId = reference("menu_id", MenuTable.menuId)
-    val step = varchar("step", 512)
+    val step = varchar("step", 256)
 }

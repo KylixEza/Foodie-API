@@ -1,9 +1,11 @@
 package com.oreyo.util
 
 import com.oreyo.data.table.*
+import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteResponse
 import com.oreyo.model.ingredient.IngredientResponse
 import com.oreyo.model.menu.MenuResponse
+import com.oreyo.model.note.NoteResponse
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.transaction.TransactionResponse
@@ -141,4 +143,31 @@ object Mapper {
 	}
 	
 	fun mapMenuRowToInt(row: ResultRow): Int = row[MenuTable.ordered]
+	
+	fun mapRowToNoteResponse(row: ResultRow?): NoteResponse? {
+		if (row == null)
+			return null
+		
+		return NoteResponse(
+			uid = row[NoteTable.uid],
+			noteId = row[NoteTable.noteId],
+			category = row[NoteTable.category],
+			calories = row[NoteTable.calories],
+			date = row[NoteTable.date],
+			food = row[NoteTable.food],
+			information = row[NoteTable.information],
+			portion = row[NoteTable.portion],
+			time = row[NoteTable.time]
+		)
+	}
+	
+	fun mapRowToCouponResponse(row: ResultRow?): CouponResponse? {
+		if (row == null)
+			return null
+		
+		return CouponResponse(
+			couponId = row[CouponTable.couponId],
+			imageUrl = row[CouponTable.imageUrl]
+		)
+	}
 }

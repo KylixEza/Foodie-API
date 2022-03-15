@@ -6,20 +6,20 @@ object MenuTable: Table() {
 
     override val tableName: String = "menu"
 
-    val menuId = varchar("menuId", 512)
-    val benefit = varchar("benefit", 2048)
-    val description = varchar("description", 2048)
-    val difficulty = varchar("difficulty", 512)
+    val menuId = varchar("menuId", 128)
+    val benefit = varchar("benefit", 1024)
+    val description = varchar("description", 1024)
+    val difficulty = varchar("difficulty", 24)
     val calories = integer("calories")
     val cookTime = integer("cook_time")
-    val estimatedTime = varchar("estimated_time", 512)
-    val image = varchar("image", 512)
+    val estimatedTime = varchar("estimated_time", 36)
+    val image = varchar("image", 64)
     val ordered = integer("ordered")
     val price = integer("price")
     val rating = double("rating")
-    val title = varchar("title", 512)
-    val type = varchar("type", 512)
-    val videoUrl = varchar("video_url", 512)
+    val title = varchar("title", 128)
+    val type = varchar("type", 36)
+    val videoUrl = varchar("video_url", 128)
 
     override val primaryKey: PrimaryKey = PrimaryKey(menuId)
 }
