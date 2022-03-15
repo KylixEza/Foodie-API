@@ -40,4 +40,7 @@ dependencies {
 
     //Util
     implementation "com.aventrix.jnanoid:jnanoid:$jnanoid_version"
+
+    //Machine Learning
+    implementation 'org.nield:kotlin-statistics:1.2.1'
 }

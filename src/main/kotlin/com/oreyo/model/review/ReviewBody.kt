@@ -1,11 +1,15 @@
-package com.oreyo.model.favorite
+package com.oreyo.model.review
 
 import com.google.gson.annotations.SerializedName
 
-data class FavoriteResponse(
+data class ReviewBody(
+	
 	@field:SerializedName("uid")
 	val uid: String,
 	
 	@field:SerializedName("menu_id")
-	val menuId: String
+	val menuId: String,
+	
+	@field:SerializedName("rating")
+	val rating: Double
 )

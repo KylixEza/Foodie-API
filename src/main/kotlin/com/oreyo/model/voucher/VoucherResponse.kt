@@ -11,7 +11,7 @@ data class VoucherResponse(
 	val background: String,
 	
 	@field:SerializedName("coin_cost")
-	val coinCost: String,
+	val coinCost: Int,
 	
 	@field:SerializedName("valid_until")
 	val validUntil: String,
@@ -20,5 +20,5 @@ data class VoucherResponse(
 	val voucherCategory: String,
 	
 	@field:SerializedName("voucher_discount")
-	val voucherDiscount: String,
+	val voucherDiscount: Int,
 )
