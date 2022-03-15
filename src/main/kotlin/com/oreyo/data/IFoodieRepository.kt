@@ -1,5 +1,6 @@
 package com.oreyo.data
 
+import com.oreyo.model.challenge.ChallengeResponse
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteBody
 import com.oreyo.model.favorite.FavoriteResponse
@@ -27,12 +28,12 @@ interface IFoodieRepository {
 	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse>
 	suspend fun getAllCoupons(): List<CouponResponse>
 	suspend fun getAllMenus(): List<MenuResponse>
-	suspend fun getTypedMenus(type: String): List<MenuResponse?>
+	suspend fun getCategoryMenus(category: String): List<MenuResponse?>
 	suspend fun getDietMenus(): List<MenuResponse>
-	suspend fun updateMenuOrder(menuId: String): Int
 	suspend fun getPopularMenus(): List<MenuResponse>
 	suspend fun getExclusiveMenus(): List<MenuResponse>
 	suspend fun getDetailMenu(menuId: String): MenuResponse
+	suspend fun updateMenuOrder(menuId: String)
 	suspend fun searchMenu(query: String): List<MenuResponse>
 	suspend fun getIngredients(menuId: String): List<IngredientResponse>
 	suspend fun getSteps(menuId: String): List<StepResponse>
@@ -46,4 +47,5 @@ interface IFoodieRepository {
 	suspend fun getCaloriesPrediction(body: NoteBody): Int?
 	suspend fun addNewNote(body: NoteBody)
 	suspend fun getAllNoteByUser(uid: String): List<NoteResponse>
+	suspend fun getAllAvailableChallenge(uid: String): List<ChallengeResponse>
 }

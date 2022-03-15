@@ -18,7 +18,7 @@ data class NoteBody (
 	@field:SerializedName("food")
 	val food: String,
 	
-	@field:SerializedName("informtaion")
+	@field:SerializedName("information")
 	val information: String,
 	
 	@field:SerializedName("portion")

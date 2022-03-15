@@ -95,29 +95,17 @@ class FoodieRepository(
 		MenuTable.selectAll().mapNotNull { Mapper.mapRowToMenuResponse(it) }
 	}
 	
-	override suspend fun getTypedMenus(type: String) = dbFactory.dbQuery {
+	override suspend fun getCategoryMenus(category: String) = dbFactory.dbQuery {
 		MenuTable.select {
-			MenuTable.type.eq(type)
+			MenuTable.category.eq(category)
 		}.map { Mapper.mapRowToMenuResponse(it) }
 	}
 	
 	override suspend fun getDietMenus() = dbFactory.dbQuery {
 		MenuTable.select {
-			MenuTable.type.eq("Vegetable")
+			MenuTable.category.eq("Vegetable")
 		}.orderBy(MenuTable.calories, SortOrder.DESC).mapNotNull {
 			Mapper.mapRowToMenuResponse(it)
-		}
-	}
-	
-	override suspend fun updateMenuOrder(menuId: String) = dbFactory.dbQuery {
-		val totalOrderNow = MenuTable
-			.select(MenuTable.menuId.eq(menuId))
-			.firstNotNullOf { Mapper.mapMenuRowToInt(it) }
-		
-		MenuTable.update(
-			where = {MenuTable.menuId.eq(menuId)}
-		) { table ->
-			table[ordered] = totalOrderNow.plus(1)
 		}
 	}
 	
@@ -136,6 +124,20 @@ class FoodieRepository(
 			MenuTable.menuId.eq(menuId)
 		}.mapNotNull { Mapper.mapRowToMenuResponse(it) }
 	}.first()
+	
+	override suspend fun updateMenuOrder(menuId: String) {
+		dbFactory.dbQuery {
+			val totalOrderNow = MenuTable
+				.select(MenuTable.menuId.eq(menuId))
+				.firstNotNullOf { Mapper.mapMenuRowToInt(it) }
+			
+			MenuTable.update(
+				where = {MenuTable.menuId.eq(menuId)}
+			) { table ->
+				table[ordered] = totalOrderNow.plus(1)
+			}
+		}
+	}
 	
 	override suspend fun searchMenu(query: String) = dbFactory.dbQuery {
 		MenuTable.select {
@@ -274,6 +276,10 @@ class FoodieRepository(
 		}.mapNotNull {
 			Mapper.mapRowToNoteResponse(it)
 		}
+	}
+	
+	override suspend fun getAllAvailableChallenge(uid: String) = dbFactory.dbQuery {
+		ChallengeTable.selectAll().mapNotNull { Mapper.mapRowToChallengeResponse(it) }
 	}
 	
 	private fun String.splitWords() =  split(Regex("\\s")).asSequence()

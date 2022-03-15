@@ -1,6 +1,7 @@
 package com.oreyo.util
 
 import com.oreyo.data.table.*
+import com.oreyo.model.challenge.ChallengeResponse
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteResponse
 import com.oreyo.model.ingredient.IngredientResponse
@@ -50,7 +51,7 @@ object Mapper {
 			price = row[MenuTable.price],
 			rating = row[MenuTable.rating],
 			title = row[MenuTable.title],
-			type = row[MenuTable.type],
+			type = row[MenuTable.category],
 			videoUrl = row[MenuTable.videoUrl]
 		)
 	}
@@ -168,6 +169,19 @@ object Mapper {
 		return CouponResponse(
 			couponId = row[CouponTable.couponId],
 			imageUrl = row[CouponTable.imageUrl]
+		)
+	}
+	
+	fun mapRowToChallengeResponse(row: ResultRow?): ChallengeResponse? {
+		if (row == null)
+			return null
+		
+		return ChallengeResponse(
+			challengeId = row[ChallengeTable.challengeId],
+			title = row[ChallengeTable.title],
+			description = row[ChallengeTable.description],
+			participant = row[ChallengeTable.participant],
+			xpEarned = row[ChallengeTable.xpEarned]
 		)
 	}
 }

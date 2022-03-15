@@ -8,6 +8,7 @@ object MenuTable: Table() {
 
     val menuId = varchar("menuId", 128)
     val benefit = varchar("benefit", 1024)
+    val category = varchar("type", 36)
     val description = varchar("description", 1024)
     val difficulty = varchar("difficulty", 24)
     val calories = integer("calories")
@@ -18,7 +19,6 @@ object MenuTable: Table() {
     val price = integer("price")
     val rating = double("rating")
     val title = varchar("title", 128)
-    val type = varchar("type", 36)
     val videoUrl = varchar("video_url", 128)
 
     override val primaryKey: PrimaryKey = PrimaryKey(menuId)
