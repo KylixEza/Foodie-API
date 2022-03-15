@@ -1,5 +1,8 @@
 package com.oreyo.route.menu
 
+import io.ktor.locations.*
+
+@KtorExperimentalLocationsAPI
 sealed class MenuRouteLocation {
 	companion object {
 		//GET (Include query to search menu)
@@ -28,4 +31,40 @@ sealed class MenuRouteLocation {
 		//GET
 		const val VARIANTS = "$MENUS/{menuId}/variant"
 	}
+	
+	@Location(MENUS)
+	class MenuGetListRoute
+	
+	@Location(COUPONS)
+	class CouponGetListRoute
+	
+	@Location(CATEGORY)
+	class CategoryGetListRoute
+	
+	@Location(DIET)
+	class DietGetListRoute
+	
+	@Location(POPULAR)
+	class PopularGetListRoute
+	
+	@Location(EXCLUSIVE)
+	class ExclusiveGetListRoute
+	
+	@Location(DETAIL_MENU)
+	data class MenuGetDetailRoute(val menuId: String)
+	
+	@Location(UPDATE_ORDER)
+	data class MenuUpdateOrderRoute(val menuId: String)
+	
+	@Location(INGREDIENTS)
+	data class MenuGetIngredientListRoute(val menuId: String)
+	
+	@Location(STEPS)
+	data class MenuGetStepListRoute(val menuId: String)
+	
+	@Location(REVIEWS)
+	data class MenuGetReviewListRoute(val menuId: String)
+	
+	@Location(VARIANTS)
+	data class MenuGetVariantListRoute(val menuId: String)
 }
