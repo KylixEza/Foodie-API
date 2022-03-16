@@ -70,10 +70,10 @@ class FoodieRepository(
 			.mapNotNull { it[UserTable.xp] }
 	}
 	
-	override suspend fun addFavorite(body: FavoriteBody) {
+	override suspend fun addFavorite(uid: String, body: FavoriteBody) {
 		dbFactory.dbQuery {
 			FavoriteTable.insert { table ->
-				table[uid] = body.uid
+				table[FavoriteTable.uid] = uid
 				table[menuId] = body.menuId
 			}
 		}
@@ -175,7 +175,7 @@ class FoodieRepository(
 		}
 	}
 	
-	override suspend fun addNewTransaction(body: TransactionBody) {
+	override suspend fun addNewTransaction(uid: String, body: TransactionBody) {
 		dbFactory.dbQuery {
 			val dateObj = Date()
 			val df: DateFormat = SimpleDateFormat("dd-MM-yyyy")
@@ -183,7 +183,7 @@ class FoodieRepository(
 			val dateCreated = df.format(dateObj)
 			
 			TransactionTable.insert { table ->
-				table[uid] = body.uid
+				table[TransactionTable.uid] = uid
 				table[transactionId] = "TRANSACTION ${NanoIdUtils.randomNanoId()}"
 				table[variant] = body.variant
 				table[date] = dateCreated

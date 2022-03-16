@@ -147,4 +147,21 @@ class MenuRoute(
 			call.generalListSuccess { repository.getAllVariants(menuId!!) }
 		}
 	}
+	
+	fun initMenuRoute(route: Route) {
+		route.apply {
+			getAllMenus()
+			getAllCoupons()
+			getCategoryMenus()
+			getDietMenus()
+			getPopularMenus()
+			getExclusiveMenus()
+			getDetailMenu()
+			updateOrderMenu()
+			getIngredients()
+			getSteps()
+			getReviews()
+			getVariants()
+		}
+	}
 }

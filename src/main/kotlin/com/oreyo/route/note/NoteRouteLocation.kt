@@ -22,5 +22,5 @@ sealed class NoteRouteLocation {
 	class NotePostRoute
 	
 	@Location(GET_NOTE)
-	data class NoteGetDetailRoute(val uid: String)
+	data class NoteGetListRoute(val uid: String)
 }

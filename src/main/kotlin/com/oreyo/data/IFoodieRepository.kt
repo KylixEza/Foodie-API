@@ -24,7 +24,7 @@ interface IFoodieRepository {
 	suspend fun getDetailUser(uid: String): UserResponse
 	suspend fun updateUser(uid: String, body: UserBody)
 	suspend fun getLeaderboard(): List<Int>
-	suspend fun addFavorite(body: FavoriteBody)
+	suspend fun addFavorite(uid: String, body: FavoriteBody)
 	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse>
 	suspend fun getAllCoupons(): List<CouponResponse>
 	suspend fun getAllMenus(): List<MenuResponse>
@@ -39,7 +39,7 @@ interface IFoodieRepository {
 	suspend fun getSteps(menuId: String): List<StepResponse>
 	suspend fun getReviews(menuId: String, request: ReviewRequest): List<ReviewResponse>
 	suspend fun getAllVariants(menuId: String): List<VariantResponse>
-	suspend fun addNewTransaction(body: TransactionBody)
+	suspend fun addNewTransaction(uid: String, body: TransactionBody)
 	suspend fun getAllTransaction(uid: String): List<TransactionResponse>
 	suspend fun getAvailableVoucher(uid: String): List<VoucherResponse>
 	suspend fun getVoucherUser(uid: String): List<VoucherUserResponse>

@@ -16,10 +16,16 @@ class ChallengeRoute(
 	private val repository: IFoodieRepository
 ) {
 	
-	private fun Route.getAllAvailableChallenge() = flow {
+	private fun Route.getAllAvailableChallenge() {
 		get<ChallengeRouteLocation.ChallengeGetListRoute> {
-			emit(call.generalListSuccess { repository.getAllAvailableChallenge() })
+			call.generalListSuccess { repository.getAllAvailableChallenge() }
 		}
-	}.flowOn(Dispatchers.IO)
+	}
+	
+	fun initChallengeRoute(route: Route) {
+		route.apply {
+			getAllAvailableChallenge()
+		}
+	}
 	
 }

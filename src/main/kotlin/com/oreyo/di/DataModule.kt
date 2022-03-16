@@ -32,10 +32,10 @@ val databaseModule = module {
 		}
 		HikariDataSource(config)
 	}
-	
-	val repositoryModule = module {
-		single<IFoodieRepository> {
-			FoodieRepository(get())
-		}
+}
+
+val repositoryModule = module {
+	single<IFoodieRepository> {
+		FoodieRepository(get())
 	}
 }
