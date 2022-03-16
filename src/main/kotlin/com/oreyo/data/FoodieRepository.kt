@@ -278,7 +278,7 @@ class FoodieRepository(
 		}
 	}
 	
-	override suspend fun getAllAvailableChallenge(uid: String) = dbFactory.dbQuery {
+	override suspend fun getAllAvailableChallenge() = dbFactory.dbQuery {
 		ChallengeTable.selectAll().mapNotNull { Mapper.mapRowToChallengeResponse(it) }
 	}
 	

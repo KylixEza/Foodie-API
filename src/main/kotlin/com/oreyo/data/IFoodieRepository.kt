@@ -47,5 +47,5 @@ interface IFoodieRepository {
 	suspend fun getCaloriesPrediction(body: NoteBody): Int?
 	suspend fun addNewNote(body: NoteBody)
 	suspend fun getAllNoteByUser(uid: String): List<NoteResponse>
-	suspend fun getAllAvailableChallenge(uid: String): List<ChallengeResponse>
+	suspend fun getAllAvailableChallenge(): List<ChallengeResponse>
 }
