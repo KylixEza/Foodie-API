@@ -3,11 +3,18 @@ package com.oreyo.data
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import com.oreyo.data.database.DatabaseFactory
 import com.oreyo.data.table.*
+import com.oreyo.model.challenge.ChallengeBody
+import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.favorite.FavoriteBody
+import com.oreyo.model.ingredient.IngredientBody
+import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.note.NoteBody
 import com.oreyo.model.review.ReviewRequest
+import com.oreyo.model.step.StepBody
 import com.oreyo.model.transaction.TransactionBody
 import com.oreyo.model.user.UserBody
+import com.oreyo.model.variant.VariantBody
+import com.oreyo.model.voucher.VoucherBody
 import com.oreyo.util.Mapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,12 +94,64 @@ class FoodieRepository(
 		}
 	}
 	
+	override suspend fun addNewCoupon(body: CouponBody) {
+		dbFactory.dbQuery {
+			CouponTable.insert {
+				it[couponId] = body.couponId
+				it[imageUrl] = body.imageUrl
+			}
+		}
+	}
+	
 	override suspend fun getAllCoupons() = dbFactory.dbQuery {
 		CouponTable.selectAll().mapNotNull { Mapper.mapRowToCouponResponse(it) }
 	}
 	
+	override suspend fun addNewMenu(body: MenuBody) {
+		dbFactory.dbQuery {
+			MenuTable.insert { table ->
+				table[menuId] = "MENU ${NanoIdUtils.randomNanoId()}"
+				table[benefit] = body.benefit
+				table[category] = body.category
+				table[description] = body.description
+				table[difficulty] = body.difficulty
+				table[calories] = body.calories
+				table[cookTime] = body.cookTime
+				table[estimatedTime] = body.estimatedTime
+				table[image] = body.image
+				table[ordered] = 0
+				table[price] = body.price
+				table[title] = body.title
+				table[videoUrl] = body.videoUrl
+			}
+		}
+	}
+	
 	override suspend fun getAllMenus() = dbFactory.dbQuery {
-		MenuTable.selectAll().mapNotNull { Mapper.mapRowToMenuResponse(it) }
+		
+		MenuTable.join(ReviewTable, JoinType.INNER) {
+			MenuTable.menuId.eq(ReviewTable.menuId)
+		}
+			.slice(
+				MenuTable.menuId,
+				MenuTable.benefit,
+				MenuTable.description,
+				MenuTable.difficulty,
+				MenuTable.calories,
+				MenuTable.cookTime,
+				MenuTable.estimatedTime,
+				MenuTable.image,
+				MenuTable.price,
+				Avg(ReviewTable.rating, 1).alias("rating"),
+				MenuTable.title,
+				MenuTable.category,
+				MenuTable.videoUrl
+			)
+			.selectAll()
+			.groupBy(MenuTable.menuId)
+			.mapNotNull {
+				Mapper.mapRowToMenuResponse(it)
+			}
 	}
 	
 	override suspend fun getCategoryMenus(category: String) = dbFactory.dbQuery {
@@ -145,10 +204,28 @@ class FoodieRepository(
 		}.mapNotNull { Mapper.mapRowToMenuResponse(it) }
 	}
 	
+	override suspend fun addNewIngredient(body: IngredientBody) {
+		dbFactory.dbQuery {
+			IngredientTable.insert {
+				it[menuId] = body.menuId
+				it[ingredient] = body.ingredient
+			}
+		}
+	}
+	
 	override suspend fun getIngredients(menuId: String) = dbFactory.dbQuery {
 		IngredientTable.select {
 			IngredientTable.menuId.eq(menuId)
 		}.mapNotNull { Mapper.mapRowToIngredientResponse(it) }
+	}
+	
+	override suspend fun addNewStep(body: StepBody) {
+		dbFactory.dbQuery {
+			StepTable.insert {
+				it[menuId] = body.menuId
+				it[step] = body.step
+			}
+		}
 	}
 	
 	override suspend fun getSteps(menuId: String) = dbFactory.dbQuery {
@@ -164,6 +241,18 @@ class FoodieRepository(
 			ReviewTable.menuId.eq(menuId)
 		}.mapNotNull {
 			Mapper.mapRowToReviewResponse(it)
+		}
+	}
+	
+	override suspend fun addNewVariant(body: VariantBody) {
+		dbFactory.dbQuery {
+			VariantTable.insert {
+				it[menuId] = body.menuId
+				it[composition] = body.composition
+				it[image] = body.image
+				it[price] = body.price
+				it[variant] = body.variant
+			}
 		}
 	}
 	
@@ -197,6 +286,16 @@ class FoodieRepository(
 			TransactionTable.uid.eq(uid)
 		}.mapNotNull {
 			Mapper.mapRowToTransactionResponse(it)
+		}
+	}
+	
+	override suspend fun addNewVoucher(body: VoucherBody) {
+		dbFactory.dbQuery {
+			VoucherTable.insert {
+				it[voucherId] = "VOUCHER ${NanoIdUtils.randomNanoId()}"
+				it[background] = body.background
+				it[coinCost] = body.coinCost
+			}
 		}
 	}
 	
@@ -275,6 +374,18 @@ class FoodieRepository(
 			NoteTable.uid.eq(uid)
 		}.mapNotNull {
 			Mapper.mapRowToNoteResponse(it)
+		}
+	}
+	
+	override suspend fun addNewChallenge(body: ChallengeBody) {
+		dbFactory.dbQuery {
+			ChallengeTable.insert {
+				it[challengeId] = "CHALLENGE ${NanoIdUtils.randomNanoId()}"
+				it[title] = body.title
+				it[description] = body.description
+				it[participant] = body.participant
+				it[xpEarned] = body.xpEarned
+			}
 		}
 	}
 	

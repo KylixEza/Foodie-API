@@ -14,7 +14,7 @@ import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantResponse
 import com.oreyo.model.voucher.VoucherResponse
 import com.oreyo.model.voucher_user.VoucherUserResponse
-import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.*
 
 object Mapper {
 	
@@ -49,7 +49,7 @@ object Mapper {
 			estimatedTime = row[MenuTable.estimatedTime],
 			image = row[MenuTable.image],
 			price = row[MenuTable.price],
-			rating = row[MenuTable.rating],
+			rating = row[Avg(ReviewTable.rating, 1).alias("rating")],
 			title = row[MenuTable.title],
 			type = row[MenuTable.category],
 			videoUrl = row[MenuTable.videoUrl]

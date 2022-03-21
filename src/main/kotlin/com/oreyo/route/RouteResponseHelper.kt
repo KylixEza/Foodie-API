@@ -12,23 +12,21 @@ import kotlinx.coroutines.flow.flowOn
 
 object RouteResponseHelper {
 	
-	suspend inline fun<reified T> ApplicationCall.generalSuccess(noinline action: suspend () -> T) = flow {
+	suspend inline fun<reified T> ApplicationCall.generalSuccess(noinline action: suspend () -> T) {
 		try {
 			val data = action()
-			emit(
-				this@generalSuccess.respond(
-					HttpStatusCode.OK,
-					GeneralResponse(
-						HttpStatusCode.OK.value.toString(),
-						"Success",
-						if (data is Unit) "Nothing" else data
-					)
+			this.respond(
+				HttpStatusCode.OK,
+				GeneralResponse(
+					HttpStatusCode.OK.value.toString(),
+					"Success",
+					if (data is Unit) "Nothing" else data
 				)
 			)
 		} catch (e: Exception) {
-			emit(this@generalSuccess.generalException(e))
+			this@generalSuccess.generalException(e)
 		}
-	}.flowOn(Dispatchers.IO)
+	}
 	
 	suspend inline fun ApplicationCall.generalException(exception: Exception) {
 		when(exception) {
@@ -38,26 +36,25 @@ object RouteResponseHelper {
 		}
 	}
 	
-	suspend inline fun<reified T> ApplicationCall.generalListSuccess(noinline action: suspend () -> T) = flow {
+	suspend inline fun<reified T> ApplicationCall.generalListSuccess(noinline action: suspend () -> T) {
 		try {
 			val count = count { action() as List<*> }
-			emit(
-				this@generalListSuccess.respond(
-					HttpStatusCode.OK,
-					GeneralListResponse(
-						HttpStatusCode.OK.value.toString(),
-						"Request Success",
-						count,
-						action()
-					)
+			this.respond(
+				HttpStatusCode.OK,
+				GeneralListResponse(
+					HttpStatusCode.OK.value.toString(),
+					"Request Success",
+					count,
+					action()
 				)
 			)
+			
 		} catch (e: Exception) {
-			emit(this@generalListSuccess.listNoteException(e))
+			this@generalListSuccess.generalListException(e)
 		}
-	}.flowOn(Dispatchers.IO)
+	}
 	
-	suspend inline fun ApplicationCall.listNoteException(e: Exception) {
+	suspend inline fun ApplicationCall.generalListException(e: Exception) {
 		val listResponse = GeneralListResponse(message = e.message.toString(), count = 0, data = arrayListOf<Any>())
 		when(e) {
 			is BadRequestException -> {

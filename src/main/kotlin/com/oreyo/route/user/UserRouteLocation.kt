@@ -1,5 +1,8 @@
 package com.oreyo.route.user
 
+import com.oreyo.route.voucher.VoucherRouteLocation.Companion.AVAILABLE_VOUCHER
+import com.oreyo.route.voucher.VoucherRouteLocation.Companion.DETAIL_VOUCHER
+import com.oreyo.route.voucher.VoucherRouteLocation.Companion.OWN_VOUCHER
 import io.ktor.locations.*
 
 @KtorExperimentalLocationsAPI
@@ -23,12 +26,7 @@ class UserRouteLocation {
 		const val ADD_TRANSACTION = "$SELECTED_USER/transaction"
 		//GET
 		const val TRANSACTIONS = "$SELECTED_USER/transaction"
-		//GET
-		const val AVAILABLE_VOUCHER = "$SELECTED_USER/voucher/available"
-		//GET
-		const val OWN_VOUCHER = "$SELECTED_USER/voucher/own"
-		//GET
-		const val DETAIL_VOUCHER = "/voucher/{voucherId}"
+		
 	}
 	
 	@Location(ADD_USER)
@@ -54,13 +52,4 @@ class UserRouteLocation {
 	
 	@Location(TRANSACTIONS)
 	data class TransactionGetListRoute(val uid: String)
-	
-	@Location(AVAILABLE_VOUCHER)
-	data class VoucherAvailableGetListRoute(val uid: String)
-	
-	@Location(OWN_VOUCHER)
-	data class VoucherOwnGetListRoute(val uid: String)
-	
-	@Location(DETAIL_VOUCHER)
-	data class VoucherGetDetailRoute(val voucherId: String)
 }

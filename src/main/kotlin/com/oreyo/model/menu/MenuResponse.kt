@@ -1,6 +1,7 @@
 package com.oreyo.model.menu
 
 import com.google.gson.annotations.SerializedName
+import java.math.BigDecimal
 
 data class MenuResponse(
 	
@@ -32,7 +33,7 @@ data class MenuResponse(
 	val price: Int,
 	
 	@field:SerializedName("rating")
-	val rating: Double,
+	val rating: BigDecimal?,
 	
 	@field:SerializedName("title")
 	val title: String,

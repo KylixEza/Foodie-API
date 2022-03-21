@@ -6,37 +6,53 @@ import io.ktor.locations.*
 sealed class MenuRouteLocation {
 	companion object {
 		//GET (Include query to search menu)
-		const val MENUS = "/menus"
+		const val MENU = "/menu"
+		//POST
+		const val POST_MENU = "/menu"
 		//GET
-		const val COUPONS = "/coupons"
+		const val COUPON = "/coupon"
+		//POST
+		const val POST_COUPON = "/coupon"
 		//Using query to get category
 		//GET
-		const val CATEGORY = "$MENUS/category"
+		const val CATEGORY = "$MENU/category"
 		//GET
-		const val DIET = "$MENUS/diet"
+		const val DIET = "$MENU/diet"
 		//GET
-		const val POPULAR = "$MENUS/popular"
+		const val POPULAR = "$MENU/popular"
 		//GET
-		const val EXCLUSIVE = "$MENUS/exclusive"
+		const val EXCLUSIVE = "$MENU/exclusive"
 		//GET
-		const val DETAIL_MENU = "$MENUS/{menuId}"
+		const val DETAIL_MENU = "$MENU/{menuId}"
 		//UPDATE
-		const val UPDATE_ORDER = "$MENUS/{menuId}/order"
+		const val UPDATE_ORDER = "$MENU/{menuId}/order"
 		//GET
-		const val INGREDIENTS = "$MENUS/{menuId}/ingredient"
+		const val INGREDIENT = "$MENU/{menuId}/ingredient"
+		//POST
+		const val POST_INGREDIENT = "$MENU/{menuId}/ingredient"
 		//GET
-		const val STEPS = "$MENUS/{menuId}/step"
+		const val STEP = "$MENU/{menuId}/step"
+		//POST
+		const val POST_STEP = "$MENU/{menuId}/step"
 		//GET
-		const val REVIEWS = "$MENUS/{menuId}/review"
+		const val REVIEW = "$MENU/{menuId}/review"
 		//GET
-		const val VARIANTS = "$MENUS/{menuId}/variant"
+		const val VARIANT = "$MENU/{menuId}/variant"
+		//POST
+		const val POST_VARIANT = "$MENU/{menuId}/variant"
 	}
 	
-	@Location(MENUS)
+	@Location(MENU)
 	class MenuGetListRoute
 	
-	@Location(COUPONS)
+	@Location(POST_MENU)
+	class MenuPostRoute
+	
+	@Location(COUPON)
 	class CouponGetListRoute
+	
+	@Location(POST_COUPON)
+	class CouponPostRoute
 	
 	@Location(CATEGORY)
 	class CategoryGetListRoute
@@ -56,15 +72,24 @@ sealed class MenuRouteLocation {
 	@Location(UPDATE_ORDER)
 	data class MenuUpdateOrderRoute(val menuId: String)
 	
-	@Location(INGREDIENTS)
+	@Location(INGREDIENT)
 	data class MenuGetIngredientListRoute(val menuId: String)
 	
-	@Location(STEPS)
+	@Location(POST_INGREDIENT)
+	data class MenuPostIngredientRoute(val menuId: String)
+	
+	@Location(STEP)
 	data class MenuGetStepListRoute(val menuId: String)
 	
-	@Location(REVIEWS)
+	@Location(POST_STEP)
+	data class MenuPostStepRoute(val menuId: String)
+	
+	@Location(REVIEW)
 	data class MenuGetReviewListRoute(val menuId: String)
 	
-	@Location(VARIANTS)
+	@Location(VARIANT)
 	data class MenuGetVariantListRoute(val menuId: String)
+	
+	@Location(POST_VARIANT)
+	data class MenuPostVariantRoute(val menuId: String)
 }

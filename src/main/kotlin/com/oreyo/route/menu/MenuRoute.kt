@@ -1,13 +1,19 @@
 package com.oreyo.route.menu
 
 import com.oreyo.data.IFoodieRepository
+import com.oreyo.model.coupon.CouponBody
+import com.oreyo.model.ingredient.IngredientBody
+import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.review.ReviewRequest
+import com.oreyo.model.step.StepBody
+import com.oreyo.model.variant.VariantBody
 import com.oreyo.route.RouteResponseHelper.generalException
 import com.oreyo.route.RouteResponseHelper.generalListSuccess
 import com.oreyo.route.RouteResponseHelper.generalSuccess
 import io.ktor.application.*
 import io.ktor.locations.*
 import io.ktor.locations.put
+import io.ktor.locations.post
 import io.ktor.request.*
 import io.ktor.routing.*
 
@@ -31,9 +37,33 @@ class MenuRoute(
 		}
 	}
 	
+	private fun Route.postMenu() {
+		post<MenuRouteLocation.MenuPostRoute> {
+			val body = try {
+				call.receive<MenuBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewMenu(body) }
+		}
+	}
+	
 	private fun Route.getAllCoupons()  {
 		get<MenuRouteLocation.CouponGetListRoute> {
 			call.generalListSuccess { repository.getAllCoupons() }
+		}
+	}
+	
+	private fun Route.postCoupon() {
+		post<MenuRouteLocation.CouponPostRoute> {
+			val body = try {
+				call.receive<CouponBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewCoupon(body) }
 		}
 	}
 	
@@ -105,6 +135,18 @@ class MenuRoute(
 		}
 	}
 	
+	private fun Route.postIngredient() {
+		post<MenuRouteLocation.MenuPostIngredientRoute> {
+			val body = try {
+				call.receive<IngredientBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewIngredient(body) }
+		}
+	}
+	
 	private fun Route.getSteps() {
 		get<MenuRouteLocation.MenuGetStepListRoute> {
 			val menuId = try {
@@ -114,6 +156,18 @@ class MenuRoute(
 				return@get
 			}
 			call.generalListSuccess { repository.getSteps(menuId!!) }
+		}
+	}
+	
+	private fun Route.postStep() {
+		post<MenuRouteLocation.MenuPostStepRoute> {
+			val body = try {
+				call.receive<StepBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewStep(body) }
 		}
 	}
 	
@@ -148,10 +202,24 @@ class MenuRoute(
 		}
 	}
 	
+	private fun Route.postVariant() {
+		post<MenuRouteLocation.MenuPostVariantRoute> {
+			val body = try {
+				call.receive<VariantBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewVariant(body) }
+		}
+	}
+	
 	fun initMenuRoute(route: Route) {
 		route.apply {
 			getAllMenus()
+			postMenu()
 			getAllCoupons()
+			postCoupon()
 			getCategoryMenus()
 			getDietMenus()
 			getPopularMenus()
@@ -159,9 +227,12 @@ class MenuRoute(
 			getDetailMenu()
 			updateOrderMenu()
 			getIngredients()
+			postIngredient()
 			getSteps()
+			postStep()
 			getReviews()
 			getVariants()
+			postVariant()
 		}
 	}
 }

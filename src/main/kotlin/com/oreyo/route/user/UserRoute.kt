@@ -133,42 +133,6 @@ class UserRoute(
 		}
 	}
 	
-	private fun Route.getAvailableVoucher() {
-		get<UserRouteLocation.VoucherAvailableGetListRoute> {
-			val uid = try {
-				call.parameters["uid"]
-			} catch (e: Exception) {
-				call.generalException(e)
-				return@get
-			}
-			call.generalListSuccess { repository.getAvailableVoucher(uid!!) }
-		}
-	}
-	
-	private fun Route.getOwnVoucherByUser() {
-		get<UserRouteLocation.VoucherOwnGetListRoute> {
-			val uid = try {
-				call.parameters["uid"]
-			} catch (e: Exception) {
-				call.generalException(e)
-				return@get
-			}
-			call.generalListSuccess { repository.getVoucherUser(uid!!) }
-		}
-	}
-	
-	private fun Route.getDetailVoucher() {
-		get<UserRouteLocation.VoucherGetDetailRoute> {
-			val voucherId = try {
-				call.parameters["voucherId"]
-			} catch (e: Exception) {
-				call.generalException(e)
-				return@get
-			}
-			call.generalSuccess { repository.getDetailVoucher(voucherId!!) }
-		}
-	}
-	
 	fun initUserRoute(route: Route) {
 		route.apply {
 			addNewUser()
@@ -179,9 +143,6 @@ class UserRoute(
 			getLeaderboard()
 			postNewTransaction()
 			getTransactionsByUser()
-			getAvailableVoucher()
-			getOwnVoucherByUser()
-			getDetailVoucher()
 		}
 	}
 }

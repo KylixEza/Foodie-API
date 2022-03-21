@@ -1,12 +1,13 @@
 package com.oreyo.data.table
 
+import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
 object MenuTable: Table() {
 
     override val tableName: String = "menu"
 
-    val menuId = varchar("menuId", 128)
+    val menuId = varchar("menu_id", 128)
     val benefit = varchar("benefit", 1024)
     val category = varchar("type", 36)
     val description = varchar("description", 1024)
@@ -17,7 +18,7 @@ object MenuTable: Table() {
     val image = varchar("image", 64)
     val ordered = integer("ordered")
     val price = integer("price")
-    val rating = double("rating")
+    //val rating = double("rating")
     val title = varchar("title", 128)
     val videoUrl = varchar("video_url", 128)
 
