@@ -1,6 +1,5 @@
 package com.oreyo.data.table
 
-import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 
 object MenuTable: Table() {

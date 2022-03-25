@@ -4,12 +4,13 @@ import com.oreyo.data.table.*
 import com.oreyo.model.challenge.ChallengeResponse
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteResponse
+import com.oreyo.model.history.HistoryResponse
 import com.oreyo.model.ingredient.IngredientResponse
 import com.oreyo.model.menu.MenuResponse
 import com.oreyo.model.note.NoteResponse
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepResponse
-import com.oreyo.model.transaction.TransactionResponse
+import com.oreyo.model.history.TransactionResponse
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantResponse
 import com.oreyo.model.voucher.VoucherResponse
@@ -117,11 +118,28 @@ object Mapper {
 			return null
 		
 		return TransactionResponse(
-			uid = row[TransactionTable.transactionId],
-			transactionId = row[TransactionTable.transactionId],
-			variant = row[TransactionTable.variant],
-			date = row[TransactionTable.date],
-			price = row[TransactionTable.price]
+			uid = row[HistoryTable.uid],
+			transactionId = row[HistoryTable.transactionId],
+			variant = row[VariantTable.variant],
+			timeStamp = row[HistoryTable.timeStamp],
+			price = row[VariantTable.price]
+		)
+	}
+	
+	fun mapRowToHistoryResponse(row: ResultRow?): HistoryResponse? {
+		if (row == null) {
+			return null
+		}
+		
+		return HistoryResponse(
+			transactionId = row[HistoryTable.transactionId],
+			menuId = row[MenuTable.menuId],
+			timeStamp = row[HistoryTable.timeStamp],
+			title = row[MenuTable.title],
+			image = row[MenuTable.image],
+			variant = row[VariantTable.variant],
+			status = row[HistoryTable.status],
+			starsGiven = row[HistoryTable.starsGiven]
 		)
 	}
 	

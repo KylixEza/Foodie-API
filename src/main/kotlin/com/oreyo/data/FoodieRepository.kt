@@ -6,12 +6,14 @@ import com.oreyo.data.table.*
 import com.oreyo.model.challenge.ChallengeBody
 import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.favorite.FavoriteBody
+import com.oreyo.model.history.HistoryBody
+import com.oreyo.model.history.HistoryUpdateBody
+import com.oreyo.model.history.HistoryUpdateStarsGiven
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.note.NoteBody
 import com.oreyo.model.review.ReviewRequest
 import com.oreyo.model.step.StepBody
-import com.oreyo.model.transaction.TransactionBody
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.variant.VariantBody
 import com.oreyo.model.voucher.VoucherBody
@@ -264,28 +266,77 @@ class FoodieRepository(
 		}
 	}
 	
-	override suspend fun addNewTransaction(uid: String, body: TransactionBody) {
+	override suspend fun getAllLastTransaction(uid: String) = dbFactory.dbQuery {
+		HistoryTable.join(VariantTable, JoinType.INNER) {
+			HistoryTable.menuId.eq(VariantTable.menuId) and HistoryTable.variant.eq(VariantTable.variant)
+		}.select {
+			HistoryTable.uid.eq(uid)
+		}.mapNotNull {
+			Mapper.mapRowToTransactionResponse(it)
+		}
+	}
+	
+	override suspend fun addNewHistory(uid: String, body: HistoryBody) {
 		dbFactory.dbQuery {
 			val dateObj = Date()
-			val df: DateFormat = SimpleDateFormat("dd-MM-yyyy")
+			val df: DateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm")
 			df.timeZone = TimeZone.getTimeZone("Asia/Jakarta")
 			val dateCreated = df.format(dateObj)
 			
-			TransactionTable.insert { table ->
-				table[TransactionTable.uid] = uid
-				table[transactionId] = "TRANSACTION ${NanoIdUtils.randomNanoId()}"
-				table[variant] = body.variant
-				table[date] = dateCreated
-				table[price] = body.price
+			HistoryTable.insert {
+				it[UserTable.uid] = uid
+				it[menuId] = body.menuId
+				it[transactionId] = "TRANSACTION ${NanoIdUtils.randomNanoId()}"
+				it[timeStamp] = dateCreated
+				it[variant] = body.variant
+				it[status] = body.status
+				it[starsGiven] = 0
 			}
 		}
 	}
 	
-	override suspend fun getAllTransaction(uid: String) = dbFactory.dbQuery {
-		TransactionTable.select {
-			TransactionTable.uid.eq(uid)
-		}.mapNotNull {
-			Mapper.mapRowToTransactionResponse(it)
+	override suspend fun updateHistoryStatus(body: HistoryUpdateBody) {
+		dbFactory.dbQuery {
+			HistoryTable.update(where = {HistoryTable.transactionId.eq(body.transactionId)}) {
+				it[status] = body.status
+			}
+		}
+	}
+	
+	override suspend fun updateHistoryStarsGiven(uid: String, body: HistoryUpdateStarsGiven) {
+		dbFactory.dbQuery {
+			HistoryTable.update(where = {HistoryTable.transactionId.eq(body.transactionId)}) {
+				it[starsGiven] = body.starsGiven
+			}
+			
+			ReviewTable.insert {
+				it[ReviewTable.uid] = uid
+				it[menuId] = body.menuId
+				it[rating] = body.starsGiven.toDouble()
+			}
+		}
+	}
+	
+	override suspend fun getAllHistoryByUser(uid: String) {
+		dbFactory.dbQuery {
+			HistoryTable.join(MenuTable, JoinType.INNER) {
+				HistoryTable.menuId.eq(MenuTable.menuId)
+			}.join(VariantTable, JoinType.INNER) {
+				VariantTable.variant.eq(HistoryTable.variant)
+			}.slice(
+				HistoryTable.transactionId,
+				MenuTable.menuId,
+				MenuTable.image,
+				MenuTable.title,
+				HistoryTable.timeStamp,
+				VariantTable.variant,
+				HistoryTable.status,
+				HistoryTable.starsGiven
+			).select {
+				HistoryTable.uid.eq(uid)
+			}.mapNotNull {
+				Mapper.mapRowToHistoryResponse(it)
+			}
 		}
 	}
 	

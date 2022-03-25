@@ -2,7 +2,9 @@ package com.oreyo.route.user
 
 import com.oreyo.data.IFoodieRepository
 import com.oreyo.model.favorite.FavoriteBody
-import com.oreyo.model.transaction.TransactionBody
+import com.oreyo.model.history.HistoryBody
+import com.oreyo.model.history.HistoryUpdateBody
+import com.oreyo.model.history.HistoryUpdateStarsGiven
 import com.oreyo.model.user.UserBody
 import com.oreyo.route.RouteResponseHelper.generalException
 import com.oreyo.route.RouteResponseHelper.generalListSuccess
@@ -101,26 +103,6 @@ class UserRoute(
 		}
 	}
 	
-	private fun Route.postNewTransaction() {
-		post<UserRouteLocation.TransactionPostRoute> {
-			val uid = try {
-				call.parameters["uid"]
-			} catch (e: Exception) {
-				call.generalException(e)
-				return@post
-			}
-			
-			val body = try {
-				call.receive<TransactionBody>()
-			} catch (e: Exception) {
-				call.generalException(e)
-				return@post
-			}
-			
-			call.generalSuccess { repository.addNewTransaction(uid!!, body) }
-		}
-	}
-	
 	private fun Route.getTransactionsByUser() {
 		get<UserRouteLocation.TransactionGetListRoute> {
 			val uid = try {
@@ -129,7 +111,80 @@ class UserRoute(
 				call.generalException(e)
 				return@get
 			}
-			call.generalListSuccess { repository.getAllTransaction(uid!!) }
+			call.generalListSuccess { repository.getAllLastTransaction(uid!!) }
+		}
+	}
+	
+	private fun Route.postHistory() {
+		post<UserRouteLocation.HistoryPostRoute> {
+			val uid = try {
+				call.parameters["uid"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			val body = try {
+				call.receive<HistoryBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			call.generalListSuccess { repository.addNewHistory(uid!!, body) }
+		}
+	}
+	
+	private fun Route.updateHistoryStatus() {
+		put<UserRouteLocation.HistoryUpdateStatusRoute> {
+			val uid = try {
+				call.parameters["uid"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@put
+			}
+			
+			val body = try {
+				call.receive<HistoryUpdateBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@put
+			}
+			
+			call.generalSuccess { repository.updateHistoryStatus(body) }
+		}
+	}
+	
+	private fun Route.updateHistoryStarsGiven() {
+		put<UserRouteLocation.HistoryUpdateStarsRoute> {
+			val uid = try {
+				call.parameters["uid"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@put
+			}
+			
+			val body = try {
+				call.receive<HistoryUpdateStarsGiven>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@put
+			}
+			
+			call.generalSuccess { repository.updateHistoryStarsGiven(uid!!, body) }
+		}
+	}
+	
+	private fun Route.getAllHistoryByUser() {
+		get<UserRouteLocation.HistoryGetListRoute> {
+			val uid = try {
+				call.parameters["uid"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@get
+			}
+			
+			call.generalListSuccess { repository.getAllHistoryByUser(uid!!) }
 		}
 	}
 	
@@ -141,8 +196,11 @@ class UserRoute(
 			addNewFavoriteByUser()
 			getFavoritesByUser()
 			getLeaderboard()
-			postNewTransaction()
 			getTransactionsByUser()
+			postHistory()
+			updateHistoryStatus()
+			updateHistoryStarsGiven()
+			getAllHistoryByUser()
 		}
 	}
 }

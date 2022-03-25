@@ -6,6 +6,9 @@ import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteBody
 import com.oreyo.model.favorite.FavoriteResponse
+import com.oreyo.model.history.HistoryBody
+import com.oreyo.model.history.HistoryUpdateBody
+import com.oreyo.model.history.HistoryUpdateStarsGiven
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.ingredient.IngredientResponse
 import com.oreyo.model.menu.MenuBody
@@ -16,8 +19,7 @@ import com.oreyo.model.review.ReviewRequest
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.step.StepResponse
-import com.oreyo.model.transaction.TransactionBody
-import com.oreyo.model.transaction.TransactionResponse
+import com.oreyo.model.history.TransactionResponse
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantBody
@@ -51,8 +53,11 @@ interface IFoodieRepository {
 	suspend fun getReviews(menuId: String, request: ReviewRequest): List<ReviewResponse>
 	suspend fun addNewVariant(body: VariantBody)
 	suspend fun getAllVariants(menuId: String): List<VariantResponse>
-	suspend fun addNewTransaction(uid: String, body: TransactionBody)
-	suspend fun getAllTransaction(uid: String): List<TransactionResponse>
+	suspend fun getAllLastTransaction(uid: String): List<TransactionResponse>
+	suspend fun addNewHistory(uid: String, body: HistoryBody)
+	suspend fun updateHistoryStatus(body: HistoryUpdateBody)
+	suspend fun updateHistoryStarsGiven(uid: String, body: HistoryUpdateStarsGiven)
+	suspend fun getAllHistoryByUser(uid: String)
 	suspend fun addNewVoucher(body: VoucherBody)
 	suspend fun getAvailableVoucher(uid: String): List<VoucherResponse>
 	suspend fun getVoucherUser(uid: String): List<VoucherUserResponse>

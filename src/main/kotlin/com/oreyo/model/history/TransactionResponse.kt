@@ -1,4 +1,4 @@
-package com.oreyo.model.transaction
+package com.oreyo.model.history
 
 import com.google.gson.annotations.SerializedName
 
@@ -13,8 +13,8 @@ data class TransactionResponse(
 	@field:SerializedName("variant")
 	val variant: String,
 	
-	@field:SerializedName("date")
-	val date: String,
+	@field:SerializedName("time_stamp")
+	val timeStamp: String,
 	
 	@field:SerializedName("price")
 	val price: Int
