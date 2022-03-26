@@ -20,6 +20,7 @@ import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.history.TransactionResponse
+import com.oreyo.model.leaderboard.LeaderBoardResponse
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantBody
@@ -29,23 +30,23 @@ import com.oreyo.model.voucher.VoucherResponse
 import com.oreyo.model.voucher_user.VoucherUserResponse
 
 interface IFoodieRepository {
-	suspend fun addUser(body: UserBody)
-	suspend fun getDetailUser(uid: String): UserResponse
-	suspend fun updateUser(uid: String, body: UserBody)
-	suspend fun getLeaderboard(): List<Int>
-	suspend fun addFavorite(uid: String, body: FavoriteBody)
-	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse>
-	suspend fun addNewCoupon(body: CouponBody)
-	suspend fun getAllCoupons(): List<CouponResponse>
-	suspend fun addNewMenu(body: MenuBody)
-	suspend fun getAllMenus(): List<MenuResponse>
-	suspend fun getCategoryMenus(category: String): List<MenuResponse?>
-	suspend fun getDietMenus(): List<MenuResponse>
-	suspend fun getPopularMenus(): List<MenuResponse>
-	suspend fun getExclusiveMenus(): List<MenuResponse>
-	suspend fun getDetailMenu(menuId: String): MenuResponse
-	suspend fun updateMenuOrder(menuId: String)
-	suspend fun searchMenu(query: String): List<MenuResponse>
+	suspend fun addUser(body: UserBody) //clear
+	suspend fun getDetailUser(uid: String): UserResponse //clear
+	suspend fun updateUser(uid: String, body: UserBody) //clear
+	suspend fun getLeaderboard(): List<LeaderBoardResponse>  //clear
+	suspend fun addFavorite(uid: String, body: FavoriteBody) //pending (depend on menu)
+	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse> //pending (depend on menu)
+	suspend fun addNewCoupon(body: CouponBody) //clear
+	suspend fun getAllCoupons(): List<CouponResponse> //clear
+	suspend fun addNewMenu(body: MenuBody) //clear
+	suspend fun getAllMenus(): List<MenuResponse> //clear (note: add default value at data class in front-end side)
+	suspend fun getCategoryMenus(category: String): List<MenuResponse?> //clear
+	suspend fun getDietMenus(): List<MenuResponse> //clear
+	suspend fun getPopularMenus(): List<MenuResponse> //clear
+	suspend fun getExclusiveMenus(): List<MenuResponse> //clear
+	suspend fun getDetailMenu(menuId: String): MenuResponse //clear
+	suspend fun updateMenuOrder(menuId: String) //clear
+	suspend fun searchMenu(query: String): List<MenuResponse> //clear
 	suspend fun addNewIngredient(body: IngredientBody)
 	suspend fun getIngredients(menuId: String): List<IngredientResponse>
 	suspend fun addNewStep(body: StepBody)

@@ -29,6 +29,9 @@ data class MenuResponse(
 	@field:SerializedName("image")
 	val image: String,
 	
+	@field:SerializedName("ordered")
+	val ordered: Int,
+	
 	@field:SerializedName("price")
 	val price: Int,
 	

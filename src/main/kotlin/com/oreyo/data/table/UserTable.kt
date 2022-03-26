@@ -9,7 +9,6 @@ object UserTable: Table() {
     val uid = varchar("uid", 128)
     val address = varchar("address", 256)
     val avatar = varchar("avatar", 512)
-    val coin = integer("coin")
     val foodieWallet = integer("foodie_wallet")
     val email = varchar("email", 64)
     val name = varchar("name", 64)

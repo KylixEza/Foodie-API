@@ -13,9 +13,6 @@ data class UserBody(
 	@field:SerializedName("avatar")
 	val avatar: String,
 	
-	@field:SerializedName("coin")
-	val coin: Int,
-	
 	@field:SerializedName("foodie_wallet")
 	val foodieWallet: Int,
 	

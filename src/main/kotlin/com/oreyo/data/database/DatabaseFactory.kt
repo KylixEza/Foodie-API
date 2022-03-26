@@ -16,8 +16,8 @@ class DatabaseFactory(
 		Database.connect(dataSource)
 		transaction {
 			val tables = listOf(
-				FavoriteTable, IngredientTable, MenuTable, ReviewTable, StepTable,
-				TransactionTable, UserTable, VariantTable, VoucherTable, VoucherUserTable
+				FavoriteTable, IngredientTable, MenuTable, CouponTable, ReviewTable, StepTable,
+				HistoryTable, UserTable, VariantTable, VoucherTable, VoucherUserTable
 			)
 			tables.forEach { table ->
 				SchemaUtils.create(table)

@@ -11,6 +11,7 @@ import com.oreyo.model.note.NoteResponse
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.history.TransactionResponse
+import com.oreyo.model.leaderboard.LeaderBoardResponse
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantResponse
 import com.oreyo.model.voucher.VoucherResponse
@@ -27,11 +28,21 @@ object Mapper {
 			uid = row[UserTable.uid],
 			address = row[UserTable.address],
 			avatar = row[UserTable.avatar],
-			coin = row[UserTable.coin],
 			foodieWallet = row[UserTable.foodieWallet],
 			email = row[UserTable.email],
 			name = row[UserTable.name],
 			phoneNumber = row[UserTable.phoneNumber],
+			xp = row[UserTable.xp]
+		)
+	}
+	
+	fun mapRowToLeaderboardResponse(row: ResultRow?): LeaderBoardResponse? {
+		if(row == null)
+			return null
+		
+		return LeaderBoardResponse(
+			uid = row[UserTable.uid],
+			name = row[UserTable.name],
 			xp = row[UserTable.xp]
 		)
 	}
@@ -49,6 +60,7 @@ object Mapper {
 			cookTime = row[MenuTable.cookTime],
 			estimatedTime = row[MenuTable.estimatedTime],
 			image = row[MenuTable.image],
+			ordered = row[MenuTable.ordered],
 			price = row[MenuTable.price],
 			rating = row[Avg(ReviewTable.rating, 1).alias("rating")],
 			title = row[MenuTable.title],
