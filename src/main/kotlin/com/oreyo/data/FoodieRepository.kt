@@ -35,7 +35,7 @@ class FoodieRepository(
 	override suspend fun addUser(body: UserBody) {
 		dbFactory.dbQuery {
 			UserTable.insert { table ->
-				table[uid] = NanoIdUtils.randomNanoId()
+				table[uid] = body.uid
 				table[address] = body.address
 				table[avatar] = body.avatar
 				table[coin] = body.coin
