@@ -16,7 +16,7 @@ data class NoteResponse(
 	val category: String,
 	
 	@field:SerializedName("calories")
-	val calories: Int,
+	val calories: Double,
 	
 	@field:SerializedName("date")
 	val date: String,
@@ -28,7 +28,7 @@ data class NoteResponse(
 	val information: String,
 	
 	@field:SerializedName("portion")
-	val portion: Int,
+	val portion: Double,
 	
 	@field:SerializedName("time")
 	val time: String

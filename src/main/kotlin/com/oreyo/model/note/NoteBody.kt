@@ -22,5 +22,5 @@ data class NoteBody (
 	val information: String,
 	
 	@field:SerializedName("portion")
-	val portion: Int
+	val portion: Double
 )
