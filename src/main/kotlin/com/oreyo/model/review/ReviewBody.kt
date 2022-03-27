@@ -7,9 +7,6 @@ data class ReviewBody(
 	@field:SerializedName("uid")
 	val uid: String,
 	
-	@field:SerializedName("menu_id")
-	val menuId: String,
-	
 	@field:SerializedName("rating")
 	val rating: Double
 )

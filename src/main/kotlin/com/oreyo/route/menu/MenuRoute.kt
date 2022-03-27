@@ -4,6 +4,7 @@ import com.oreyo.data.IFoodieRepository
 import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.menu.MenuBody
+import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.review.ReviewRequest
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.variant.VariantBody
@@ -188,22 +189,35 @@ class MenuRoute(
 		}
 	}
 	
-	private fun Route.getReviews() {
-		get<MenuRouteLocation.MenuGetReviewListRoute> {
-			val request = try {
-				call.receive<ReviewRequest>()
+	private fun Route.postReview() {
+		post<MenuRouteLocation.MenuPostReviewRoute> {
+			val body = try {
+				call.receive<ReviewBody>()
 			} catch (e: Exception) {
 				call.generalException(e)
-				return@get
+				return@post
 			}
 			
 			val menuId = try {
 				call.parameters["menuId"]
 			} catch (e: Exception) {
 				call.generalException(e)
+				return@post
+			}
+			
+			call.generalSuccess { repository.addNewReview(menuId!!, body) }
+		}
+	}
+	
+	private fun Route.getReviews() {
+		get<MenuRouteLocation.MenuGetReviewListRoute> {
+			val menuId = try {
+				call.parameters["menuId"]
+			} catch (e: Exception) {
+				call.generalException(e)
 				return@get
 			}
-			call.generalListSuccess { repository.getReviews(menuId!!, request) }
+			call.generalListSuccess { repository.getReviews(menuId!!) }
 		}
 	}
 	
@@ -221,13 +235,20 @@ class MenuRoute(
 	
 	private fun Route.postVariant() {
 		post<MenuRouteLocation.MenuPostVariantRoute> {
+			val menuId = try {
+				call.parameters["menuId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
 			val body = try {
 				call.receive<VariantBody>()
 			} catch (e: Exception) {
 				call.generalException(e)
 				return@post
 			}
-			call.generalSuccess { repository.addNewVariant(body) }
+			call.generalSuccess { repository.addNewVariant(menuId!!, body) }
 		}
 	}
 	
@@ -247,6 +268,7 @@ class MenuRoute(
 			postIngredient()
 			getSteps()
 			postStep()
+			postReview()
 			getReviews()
 			getVariants()
 			postVariant()

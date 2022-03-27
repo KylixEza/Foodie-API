@@ -36,6 +36,8 @@ sealed class MenuRouteLocation {
 		const val POST_STEP = "$MENU/{menuId}/step"
 		//GET
 		const val REVIEW = "$MENU/{menuId}/review"
+		//POST
+		const val POST_REVIEW = "$MENU/{menuId}/review"
 		//GET
 		const val VARIANT = "$MENU/{menuId}/variant"
 		//POST
@@ -86,6 +88,9 @@ sealed class MenuRouteLocation {
 	
 	@Location(REVIEW)
 	data class MenuGetReviewListRoute(val menuId: String)
+	
+	@Location(POST_REVIEW)
+	data class MenuPostReviewRoute(val menuId: String)
 	
 	@Location(VARIANT)
 	data class MenuGetVariantListRoute(val menuId: String)

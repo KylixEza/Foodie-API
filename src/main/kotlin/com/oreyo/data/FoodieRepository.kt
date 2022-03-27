@@ -12,7 +12,7 @@ import com.oreyo.model.history.HistoryUpdateStarsGiven
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.note.NoteBody
-import com.oreyo.model.review.ReviewRequest
+import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.variant.VariantBody
@@ -265,20 +265,29 @@ class FoodieRepository(
 		}.mapNotNull { Mapper.mapRowToStepResponse(it) }
 	}
 	
-	override suspend fun getReviews(menuId: String, request: ReviewRequest) = dbFactory.dbQuery {
-		ReviewTable.join(UserTable, JoinType.INNER) {
-			ReviewTable.uid.eq(request.uid)
-		}.select {
+	override suspend fun addNewReview(menuId: String, body: ReviewBody) {
+		dbFactory.dbQuery {
+			ReviewTable.insert {
+				it[uid] = body.uid
+				it[this.menuId] = menuId
+				it[rating] = body.rating
+			}
+		}
+	}
+	
+	override suspend fun getReviews(menuId: String) = dbFactory.dbQuery {
+		ReviewTable.join(UserTable, JoinType.FULL)
+			.select {
 			ReviewTable.menuId.eq(menuId)
 		}.mapNotNull {
 			Mapper.mapRowToReviewResponse(it)
 		}
 	}
 	
-	override suspend fun addNewVariant(body: VariantBody) {
+	override suspend fun addNewVariant(menuId: String, body: VariantBody) {
 		dbFactory.dbQuery {
 			VariantTable.insert {
-				it[menuId] = body.menuId
+				it[this.menuId] = menuId
 				it[composition] = body.composition
 				it[image] = body.image
 				it[price] = body.price

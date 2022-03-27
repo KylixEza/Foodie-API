@@ -3,9 +3,6 @@ package com.oreyo.model.variant
 import com.google.gson.annotations.SerializedName
 
 data class VariantBody(
-	@field:SerializedName("menu_id")
-	val menuId: String,
-	
 	@field:SerializedName("composition")
 	val composition: String,
 	

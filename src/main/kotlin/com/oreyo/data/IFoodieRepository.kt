@@ -15,12 +15,12 @@ import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.menu.MenuResponse
 import com.oreyo.model.note.NoteBody
 import com.oreyo.model.note.NoteResponse
-import com.oreyo.model.review.ReviewRequest
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.history.TransactionResponse
 import com.oreyo.model.leaderboard.LeaderBoardResponse
+import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantBody
@@ -50,10 +50,11 @@ interface IFoodieRepository {
 	suspend fun addNewIngredient(menuId: String, body: IngredientBody) //clear
 	suspend fun getIngredients(menuId: String): List<IngredientResponse> //clear
 	suspend fun addNewStep(menuId: String, body: StepBody) //clear
-	suspend fun getSteps(menuId: String): List<StepResponse>
-	suspend fun getReviews(menuId: String, request: ReviewRequest): List<ReviewResponse>
-	suspend fun addNewVariant(body: VariantBody)
-	suspend fun getAllVariants(menuId: String): List<VariantResponse>
+	suspend fun getSteps(menuId: String): List<StepResponse> //clear
+	suspend fun addNewReview(menuId: String, body: ReviewBody) //clear
+	suspend fun getReviews(menuId: String): List<ReviewResponse> //clear
+	suspend fun addNewVariant(menuId: String, body: VariantBody) //clear
+	suspend fun getAllVariants(menuId: String): List<VariantResponse> //clear
 	suspend fun getAllLastTransaction(uid: String): List<TransactionResponse>
 	suspend fun addNewHistory(uid: String, body: HistoryBody)
 	suspend fun updateHistoryStatus(body: HistoryUpdateBody)
