@@ -137,13 +137,21 @@ class MenuRoute(
 	
 	private fun Route.postIngredient() {
 		post<MenuRouteLocation.MenuPostIngredientRoute> {
+			
+			val menuId = try {
+				call.parameters["menuId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
 			val body = try {
 				call.receive<IngredientBody>()
 			} catch (e: Exception) {
 				call.generalException(e)
 				return@post
 			}
-			call.generalSuccess { repository.addNewIngredient(body) }
+			call.generalSuccess { repository.addNewIngredient(menuId!!, body) }
 		}
 	}
 	
@@ -161,13 +169,22 @@ class MenuRoute(
 	
 	private fun Route.postStep() {
 		post<MenuRouteLocation.MenuPostStepRoute> {
+			
+			val menuId = try {
+				call.parameters["menuId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			
 			val body = try {
 				call.receive<StepBody>()
 			} catch (e: Exception) {
 				call.generalException(e)
 				return@post
 			}
-			call.generalSuccess { repository.addNewStep(body) }
+			call.generalSuccess { repository.addNewStep(menuId!!, body) }
 		}
 	}
 	

@@ -235,10 +235,10 @@ class FoodieRepository(
 			)
 	}
 	
-	override suspend fun addNewIngredient(body: IngredientBody) {
+	override suspend fun addNewIngredient(menuId: String, body: IngredientBody) {
 		dbFactory.dbQuery {
 			IngredientTable.insert {
-				it[menuId] = body.menuId
+				it[IngredientTable.menuId] = menuId
 				it[ingredient] = body.ingredient
 			}
 		}
@@ -250,10 +250,10 @@ class FoodieRepository(
 		}.mapNotNull { Mapper.mapRowToIngredientResponse(it) }
 	}
 	
-	override suspend fun addNewStep(body: StepBody) {
+	override suspend fun addNewStep(menuId: String, body: StepBody) {
 		dbFactory.dbQuery {
 			StepTable.insert {
-				it[menuId] = body.menuId
+				it[StepTable.menuId] = menuId
 				it[step] = body.step
 			}
 		}
