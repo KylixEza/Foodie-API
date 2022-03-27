@@ -6,9 +6,7 @@ import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteBody
 import com.oreyo.model.favorite.FavoriteResponse
-import com.oreyo.model.history.HistoryBody
-import com.oreyo.model.history.HistoryUpdateBody
-import com.oreyo.model.history.HistoryUpdateStarsGiven
+import com.oreyo.model.history.*
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.ingredient.IngredientResponse
 import com.oreyo.model.menu.MenuBody
@@ -18,7 +16,6 @@ import com.oreyo.model.note.NoteResponse
 import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.step.StepResponse
-import com.oreyo.model.history.TransactionResponse
 import com.oreyo.model.leaderboard.LeaderBoardResponse
 import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.user.UserBody
@@ -55,11 +52,11 @@ interface IFoodieRepository {
 	suspend fun getReviews(menuId: String): List<ReviewResponse> //clear
 	suspend fun addNewVariant(menuId: String, body: VariantBody) //clear
 	suspend fun getAllVariants(menuId: String): List<VariantResponse> //clear
-	suspend fun getAllLastTransaction(uid: String): List<TransactionResponse>
-	suspend fun addNewHistory(uid: String, body: HistoryBody)
-	suspend fun updateHistoryStatus(body: HistoryUpdateBody)
-	suspend fun updateHistoryStarsGiven(uid: String, body: HistoryUpdateStarsGiven)
-	suspend fun getAllHistoryByUser(uid: String)
+	suspend fun getAllLastTransaction(uid: String): List<TransactionResponse> //clear
+	suspend fun addNewHistory(uid: String, body: HistoryBody) //clear
+	suspend fun updateHistoryStatus(body: HistoryUpdateBody) //clear
+	suspend fun updateHistoryStarsGiven(uid: String, body: HistoryUpdateStarsGiven) //clear
+	suspend fun getAllHistoryByUser(uid: String): List<HistoryResponse> //clear
 	suspend fun addNewVoucher(body: VoucherBody)
 	suspend fun getAvailableVoucher(uid: String): List<VoucherResponse>
 	suspend fun getVoucherUser(uid: String): List<VoucherUserResponse>

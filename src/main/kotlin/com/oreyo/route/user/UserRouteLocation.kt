@@ -19,8 +19,6 @@ class UserRouteLocation {
 		const val FAVORITES = "$SELECTED_USER/favorite"
 		//GET
 		const val LEADERBOARD = "/leaderboard"
-		//POST
-		const val POST_TRANSACTION = "$SELECTED_USER/transaction"
 		//GET
 		const val TRANSACTIONS = "$SELECTED_USER/transaction"
 		//POST

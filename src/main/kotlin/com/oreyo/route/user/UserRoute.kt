@@ -131,7 +131,7 @@ class UserRoute(
 				return@post
 			}
 			
-			call.generalListSuccess { repository.addNewHistory(uid!!, body) }
+			call.generalSuccess { repository.addNewHistory(uid!!, body) }
 		}
 	}
 	

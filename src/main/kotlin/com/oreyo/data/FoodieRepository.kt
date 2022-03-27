@@ -355,8 +355,7 @@ class FoodieRepository(
 		}
 	}
 	
-	override suspend fun getAllHistoryByUser(uid: String) {
-		dbFactory.dbQuery {
+	override suspend fun getAllHistoryByUser(uid: String) = dbFactory.dbQuery {
 			HistoryTable.join(MenuTable, JoinType.INNER) {
 				HistoryTable.menuId.eq(MenuTable.menuId)
 			}.join(VariantTable, JoinType.INNER) {
@@ -376,7 +375,7 @@ class FoodieRepository(
 				Mapper.mapRowToHistoryResponse(it)
 			}
 		}
-	}
+	
 	
 	override suspend fun addNewVoucher(body: VoucherBody) {
 		dbFactory.dbQuery {
