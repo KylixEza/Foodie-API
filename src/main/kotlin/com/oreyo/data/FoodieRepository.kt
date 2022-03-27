@@ -129,25 +129,7 @@ class FoodieRepository(
 	
 	override suspend fun getAllMenus() = dbFactory.dbQuery {
 		
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
+		getGeneralMenu()
 			.selectAll()
 			.groupBy(MenuTable.menuId)
 			.mapNotNull {
@@ -156,25 +138,7 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getCategoryMenus(category: String) = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
+		getGeneralMenu()
 			.select {
 				MenuTable.category.eq(category)
 			}
@@ -185,25 +149,7 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getDietMenus() = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
+		getGeneralMenu()
 			.select {
 				MenuTable.category.eq("Vegetable")
 			}
@@ -215,28 +161,8 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getPopularMenus() = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
-			.select {
-				MenuTable.category.eq("Vegetable")
-			}
+		getGeneralMenu()
+			.selectAll()
 			.groupBy(MenuTable.menuId)
 			.orderBy(MenuTable.ordered, SortOrder.DESC)
 			.mapNotNull {
@@ -245,28 +171,8 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getExclusiveMenus() = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
-			.select {
-				MenuTable.category.eq("Vegetable")
-			}
+		getGeneralMenu()
+			.selectAll()
 			.groupBy(MenuTable.menuId)
 			.mapNotNull {
 				Mapper.mapRowToMenuResponse(it)
@@ -274,26 +180,7 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getDetailMenu(menuId: String) = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
-			MenuTable.menuId.eq(ReviewTable.menuId)
-		}
-			.slice(
-				MenuTable.menuId,
-				MenuTable.benefit,
-				MenuTable.description,
-				MenuTable.difficulty,
-				MenuTable.calories,
-				MenuTable.cookTime,
-				MenuTable.estimatedTime,
-				MenuTable.image,
-				MenuTable.ordered,
-				MenuTable.price,
-				Avg(ReviewTable.rating, 1).alias("rating"),
-				MenuTable.title,
-				MenuTable.category,
-				MenuTable.videoUrl
-			)
-			.select {
+		getGeneralMenu().select {
 				MenuTable.menuId.eq(menuId)
 			}
 			.groupBy(MenuTable.menuId)
@@ -317,7 +204,17 @@ class FoodieRepository(
 	}
 	
 	override suspend fun searchMenu(query: String) = dbFactory.dbQuery {
-		MenuTable.join(ReviewTable, JoinType.LEFT) {
+		getGeneralMenu().select {
+				LowerCase(MenuTable.title).like("%$query%".lowercase(Locale.getDefault()))
+			}
+			.groupBy(MenuTable.menuId)
+			.mapNotNull {
+				Mapper.mapRowToMenuResponse(it)
+			}
+	}
+	
+	private fun getGeneralMenu(): FieldSet {
+		return MenuTable.join(ReviewTable, JoinType.LEFT) {
 			MenuTable.menuId.eq(ReviewTable.menuId)
 		}
 			.slice(
@@ -336,13 +233,6 @@ class FoodieRepository(
 				MenuTable.category,
 				MenuTable.videoUrl
 			)
-			.select {
-				LowerCase(MenuTable.title).like("%$query%".lowercase(Locale.getDefault()))
-			}
-			.groupBy(MenuTable.menuId)
-			.mapNotNull {
-				Mapper.mapRowToMenuResponse(it)
-			}
 	}
 	
 	override suspend fun addNewIngredient(body: IngredientBody) {
