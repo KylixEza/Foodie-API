@@ -1,8 +1,6 @@
 package com.oreyo.model.note
 
 import com.google.gson.annotations.SerializedName
-import com.oreyo.data.table.NoteTable
-import com.oreyo.data.table.UserTable
 
 data class NoteBody (
 	

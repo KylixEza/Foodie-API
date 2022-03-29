@@ -12,17 +12,20 @@ import com.oreyo.model.history.HistoryUpdateStarsGiven
 import com.oreyo.model.ingredient.IngredientBody
 import com.oreyo.model.menu.MenuBody
 import com.oreyo.model.note.NoteBody
+import com.oreyo.model.note.PredictionResponse
 import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.variant.VariantBody
 import com.oreyo.model.voucher.VoucherBody
+import com.oreyo.model.voucher_user.VoucherUserBody
 import com.oreyo.util.Mapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
 import org.nield.kotlinstatistics.toNaiveBayesClassifier
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -97,7 +100,7 @@ class FoodieRepository(
 	override suspend fun addNewCoupon(body: CouponBody) {
 		dbFactory.dbQuery {
 			CouponTable.insert {
-				it[couponId] = "COUPON ${NanoIdUtils.randomNanoId()}"
+				it[couponId] = "COUPON${NanoIdUtils.randomNanoId()}"
 				it[imageUrl] = body.imageUrl
 			}
 		}
@@ -110,7 +113,7 @@ class FoodieRepository(
 	override suspend fun addNewMenu(body: MenuBody) {
 		dbFactory.dbQuery {
 			MenuTable.insert { table ->
-				table[menuId] = "MENU ${NanoIdUtils.randomNanoId()}"
+				table[menuId] = "MENU${NanoIdUtils.randomNanoId()}"
 				table[benefit] = body.benefit
 				table[category] = body.category
 				table[description] = body.description
@@ -324,7 +327,7 @@ class FoodieRepository(
 			HistoryTable.insert {
 				it[UserTable.uid] = uid
 				it[menuId] = body.menuId
-				it[transactionId] = "TRANSACTION ${NanoIdUtils.randomNanoId()}"
+				it[transactionId] = "TRANSACTION${NanoIdUtils.randomNanoId()}"
 				it[timeStamp] = dateCreated
 				it[variant] = body.variant
 				it[status] = body.status
@@ -380,9 +383,12 @@ class FoodieRepository(
 	override suspend fun addNewVoucher(body: VoucherBody) {
 		dbFactory.dbQuery {
 			VoucherTable.insert {
-				it[voucherId] = "VOUCHER ${NanoIdUtils.randomNanoId()}"
+				it[voucherId] = "VOUCHER${NanoIdUtils.randomNanoId()}"
 				it[background] = body.background
-				it[coinCost] = body.coinCost
+				it[xpCost] = body.xpCost
+				it[validUntil] = body.validUntil
+				it[voucherCategory] = body.voucherCategory
+				it[voucherDiscount] = body.voucherDiscount
 			}
 		}
 	}
@@ -397,8 +403,25 @@ class FoodieRepository(
 		}
 	}
 	
+	override suspend fun claimVoucher(voucherId: String, body: VoucherUserBody) {
+		dbFactory.dbQuery {
+			VoucherUserTable.insert {
+				it[uid] = body.uid
+				it[this.voucherId] = voucherId
+			}
+			val xp = VoucherTable
+				.select { VoucherTable.voucherId.eq(voucherId) }.firstNotNullOf { it[VoucherTable.xpCost] }
+			
+			UserTable.update(where = {UserTable.uid.eq(body.uid)}) {
+				it[this.xp] = this.xp.minus(xp)
+			}
+		}
+	}
+	
 	override suspend fun getVoucherUser(uid: String) = dbFactory.dbQuery {
-		VoucherUserTable.select {
+		VoucherUserTable.join(VoucherTable, JoinType.INNER) {
+			VoucherUserTable.voucherId.eq(VoucherTable.voucherId)
+		}.select {
 			VoucherUserTable.uid.eq(uid)
 		}.mapNotNull {
 			Mapper.mapRowToVoucherUserResponse(it)
@@ -413,24 +436,28 @@ class FoodieRepository(
 		}
 	}.first()
 	
-	override suspend fun getCaloriesPrediction(body: NoteBody): Int? {
+	override suspend fun getCaloriesPrediction(body: NoteBody): PredictionResponse {
 		val menus = dbFactory.dbQuery {
-			MenuTable.selectAll().mapNotNull { Mapper.mapRowToMenuResponse(it) }
+			MenuTable.selectAll().mapNotNull { Mapper.mapRowToPredictionResponse(it) }
 		}
 		
 		val nbc = menus.toNaiveBayesClassifier(
-			featuresSelector = { it.title.splitWords().toSet() },
+			featuresSelector = { it.food.splitWords().toSet() },
 			categorySelector = { it.calories }
 		)
 		
 		val predictResult = nbc.predictWithProbability(body.food.splitWords().toSet())
-		return predictResult?.category
+		return PredictionResponse(
+			body.food,
+			predictResult?.category ?: -1,
+			predictResult?.probability ?: -1.0
+		)
 	}
 	
 	override suspend fun addNewNote(body: NoteBody) {
 		var caloriesPredict = 0
 		CoroutineScope(Dispatchers.IO).launch {
-			caloriesPredict = getCaloriesPrediction(body) ?: 0
+			caloriesPredict = getCaloriesPrediction(body).calories ?: 0
 		}.join()
 		
 		val dateObj = Date()
@@ -445,7 +472,7 @@ class FoodieRepository(
 		dbFactory.dbQuery {
 			NoteTable.insert { table ->
 				table[uid] = body.uid
-				table[noteId] = "NOTE ${NanoIdUtils.randomNanoId()}"
+				table[noteId] = "NOTE${NanoIdUtils.randomNanoId()}"
 				table[category] = body.category
 				table[calories] = caloriesPredict * body.portion
 				table[date] = dateCreated
@@ -468,7 +495,7 @@ class FoodieRepository(
 	override suspend fun addNewChallenge(body: ChallengeBody) {
 		dbFactory.dbQuery {
 			ChallengeTable.insert {
-				it[challengeId] = "CHALLENGE ${NanoIdUtils.randomNanoId()}"
+				it[challengeId] = "CHALLENGE${NanoIdUtils.randomNanoId()}"
 				it[title] = body.title
 				it[description] = body.description
 				it[participant] = body.participant

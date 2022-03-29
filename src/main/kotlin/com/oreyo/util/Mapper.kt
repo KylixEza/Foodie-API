@@ -12,6 +12,7 @@ import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.history.TransactionResponse
 import com.oreyo.model.leaderboard.LeaderBoardResponse
+import com.oreyo.model.note.PredictionResponse
 import com.oreyo.model.user.UserResponse
 import com.oreyo.model.variant.VariantResponse
 import com.oreyo.model.voucher.VoucherResponse
@@ -159,7 +160,7 @@ object Mapper {
 		return VoucherResponse(
 			voucherId = row[VoucherTable.voucherId],
 			background = row[VoucherTable.background],
-			coinCost = row[VoucherTable.coinCost],
+			coinCost = row[VoucherTable.xpCost],
 			validUntil = row[VoucherTable.validUntil],
 			voucherCategory = row[VoucherTable.voucherCategory],
 			voucherDiscount = row[VoucherTable.voucherDiscount]
@@ -168,8 +169,12 @@ object Mapper {
 	
 	fun mapRowToVoucherUserResponse(row: ResultRow): VoucherUserResponse {
 		return VoucherUserResponse(
-			uid = row[VoucherUserTable.uid],
-			voucherId = row[VoucherUserTable.voucherId]
+			voucherId = row[VoucherUserTable.voucherId],
+			background = row[VoucherTable.background],
+			coinCost = row[VoucherTable.xpCost],
+			validUntil = row[VoucherTable.validUntil],
+			voucherCategory = row[VoucherTable.voucherCategory],
+			voucherDiscount = row[VoucherTable.voucherDiscount]
 		)
 	}
 	
@@ -212,6 +217,17 @@ object Mapper {
 			description = row[ChallengeTable.description],
 			participant = row[ChallengeTable.participant],
 			xpEarned = row[ChallengeTable.xpEarned]
+		)
+	}
+	
+	fun mapRowToPredictionResponse(row: ResultRow?): PredictionResponse? {
+		if (row == null)
+			return null
+		
+		return PredictionResponse(
+			food = row[MenuTable.title],
+			calories = row[MenuTable.calories],
+			accuracy = 0.0
 		)
 	}
 }

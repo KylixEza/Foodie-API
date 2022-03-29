@@ -11,6 +11,8 @@ sealed class VoucherRouteLocation {
 		const val AVAILABLE_VOUCHER = "${SELECTED_USER}/voucher/available"
 		//GET
 		const val OWN_VOUCHER = "${SELECTED_USER}/voucher/own"
+		//POST
+		const val CLAIM_VOUCHER = "/voucher/{voucherId}/claim"
 		//GET
 		const val DETAIL_VOUCHER = "/voucher/{voucherId}"
 		//POST
@@ -22,6 +24,9 @@ sealed class VoucherRouteLocation {
 	
 	@Location(OWN_VOUCHER)
 	data class VoucherOwnGetListRoute(val uid: String)
+	
+	@Location(CLAIM_VOUCHER)
+	data class VoucherClaimRoute(val voucherId: String)
 	
 	@Location(DETAIL_VOUCHER)
 	data class VoucherGetDetailRoute(val voucherId: String)

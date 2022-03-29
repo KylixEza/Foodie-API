@@ -2,6 +2,7 @@ package com.oreyo.route.voucher
 
 import com.oreyo.data.IFoodieRepository
 import com.oreyo.model.voucher.VoucherBody
+import com.oreyo.model.voucher_user.VoucherUserBody
 import com.oreyo.route.RouteResponseHelper.generalException
 import com.oreyo.route.RouteResponseHelper.generalListSuccess
 import com.oreyo.route.RouteResponseHelper.generalSuccess
@@ -40,6 +41,26 @@ class VoucherRoute(
 		}
 	}
 	
+	private fun Route.claimVoucher() {
+		post<VoucherRouteLocation.VoucherClaimRoute> {
+			val voucherId = try {
+				call.parameters["voucherId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			val body = try {
+				call.receive<VoucherUserBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			call.generalSuccess { repository.claimVoucher(voucherId!!, body) }
+		}
+	}
+	
 	private fun Route.getDetailVoucher() {
 		get<VoucherRouteLocation.VoucherGetDetailRoute> {
 			val voucherId = try {
@@ -68,6 +89,7 @@ class VoucherRoute(
 		route.apply {
 			getAvailableVoucher()
 			getOwnVoucherByUser()
+			claimVoucher()
 			getDetailVoucher()
 			postVoucher()
 		}

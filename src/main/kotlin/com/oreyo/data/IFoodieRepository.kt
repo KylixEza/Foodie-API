@@ -17,6 +17,7 @@ import com.oreyo.model.review.ReviewResponse
 import com.oreyo.model.step.StepBody
 import com.oreyo.model.step.StepResponse
 import com.oreyo.model.leaderboard.LeaderBoardResponse
+import com.oreyo.model.note.PredictionResponse
 import com.oreyo.model.review.ReviewBody
 import com.oreyo.model.user.UserBody
 import com.oreyo.model.user.UserResponse
@@ -24,6 +25,7 @@ import com.oreyo.model.variant.VariantBody
 import com.oreyo.model.variant.VariantResponse
 import com.oreyo.model.voucher.VoucherBody
 import com.oreyo.model.voucher.VoucherResponse
+import com.oreyo.model.voucher_user.VoucherUserBody
 import com.oreyo.model.voucher_user.VoucherUserResponse
 
 interface IFoodieRepository {
@@ -57,13 +59,14 @@ interface IFoodieRepository {
 	suspend fun updateHistoryStatus(body: HistoryUpdateBody) //clear
 	suspend fun updateHistoryStarsGiven(uid: String, body: HistoryUpdateStarsGiven) //clear
 	suspend fun getAllHistoryByUser(uid: String): List<HistoryResponse> //clear
-	suspend fun addNewVoucher(body: VoucherBody)
-	suspend fun getAvailableVoucher(uid: String): List<VoucherResponse>
-	suspend fun getVoucherUser(uid: String): List<VoucherUserResponse>
-	suspend fun getDetailVoucher(voucherId: String): VoucherResponse
-	suspend fun getCaloriesPrediction(body: NoteBody): Int?
-	suspend fun addNewNote(body: NoteBody)
-	suspend fun getAllNoteByUser(uid: String): List<NoteResponse>
-	suspend fun addNewChallenge(body: ChallengeBody)
+	suspend fun addNewVoucher(body: VoucherBody) //clear
+	suspend fun getAvailableVoucher(uid: String): List<VoucherResponse> //clear
+	suspend fun claimVoucher(voucherId: String, body: VoucherUserBody) //clear
+	suspend fun getVoucherUser(uid: String): List<VoucherUserResponse> //clear
+	suspend fun getDetailVoucher(voucherId: String): VoucherResponse //clear
+	suspend fun getCaloriesPrediction(body: NoteBody): PredictionResponse //clear
+	suspend fun addNewNote(body: NoteBody) //clear
+	suspend fun getAllNoteByUser(uid: String): List<NoteResponse> //clear
+	suspend fun addNewChallenge(body: ChallengeBody) //clear
 	suspend fun getAllAvailableChallenge(): List<ChallengeResponse>
 }
