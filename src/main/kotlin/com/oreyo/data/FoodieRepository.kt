@@ -102,10 +102,29 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getAllFavoritesByUser(uid: String) = dbFactory.dbQuery {
-		FavoriteTable.select {
+		MenuTable.join(ReviewTable, JoinType.LEFT) {
+			MenuTable.menuId.eq(ReviewTable.menuId)
+		}.join(FavoriteTable, JoinType.INNER) {
+			FavoriteTable.menuId.eq(MenuTable.menuId)
+		}.slice(
+			MenuTable.menuId,
+			MenuTable.benefit,
+			MenuTable.description,
+			MenuTable.difficulty,
+			MenuTable.calories,
+			MenuTable.cookTime,
+			MenuTable.estimatedTime,
+			MenuTable.image,
+			MenuTable.ordered,
+			MenuTable.price,
+			Avg(ReviewTable.rating, 1).alias("rating"),
+			MenuTable.title,
+			MenuTable.category,
+			MenuTable.videoUrl
+		).select {
 			FavoriteTable.uid.eq(uid)
-		}.mapNotNull {
-			Mapper.mapRowToFavoriteResponse(it)
+		}.groupBy(MenuTable.menuId).mapNotNull {
+			Mapper.mapRowToMenuResponse(it)
 		}
 	}
 	

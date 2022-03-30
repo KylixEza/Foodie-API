@@ -38,7 +38,7 @@ interface IFoodieRepository {
 	suspend fun getLeaderboard(): List<LeaderBoardResponse>  //clear
 	suspend fun addFavorite(uid: String, body: FavoriteBody) //clear
 	suspend fun deleteFavorite(uid: String, body: FavoriteBody) //tested
-	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse> //clear
+	suspend fun getAllFavoritesByUser(uid: String): List<MenuResponse> //clear
 	suspend fun addNewCoupon(body: CouponBody) //clear
 	suspend fun getAllCoupons(): List<CouponResponse> //clear
 	suspend fun addNewMenu(body: MenuBody) //clear

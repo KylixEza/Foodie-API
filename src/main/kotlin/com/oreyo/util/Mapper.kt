@@ -5,7 +5,6 @@ import com.oreyo.model.challenge.ChallengeMenuResponse
 import com.oreyo.model.challenge.ChallengeResponse
 import com.oreyo.model.challenge.ParticipantResponse
 import com.oreyo.model.coupon.CouponResponse
-import com.oreyo.model.favorite.FavoriteResponse
 import com.oreyo.model.history.HistoryResponse
 import com.oreyo.model.ingredient.IngredientResponse
 import com.oreyo.model.menu.MenuResponse
@@ -116,16 +115,6 @@ object Mapper {
 				variant = row[VariantTable.variant]
 			)
 		}
-	}
-	
-	fun mapRowToFavoriteResponse(row: ResultRow?): FavoriteResponse? {
-		if(row == null)
-			return null
-		
-		return FavoriteResponse(
-			uid = row[FavoriteTable.uid],
-			menuId = row[FavoriteTable.menuId]
-		)
 	}
 	
 	fun mapRowToTransactionResponse(row: ResultRow?): TransactionResponse? {
