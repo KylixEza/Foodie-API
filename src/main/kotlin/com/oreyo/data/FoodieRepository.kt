@@ -93,6 +93,14 @@ class FoodieRepository(
 		}
 	}
 	
+	override suspend fun deleteFavorite(uid: String, body: FavoriteBody) {
+		dbFactory.dbQuery {
+			FavoriteTable.deleteWhere {
+				FavoriteTable.uid.eq(uid) and FavoriteTable.menuId.eq(body.menuId)
+			}
+		}
+	}
+	
 	override suspend fun getAllFavoritesByUser(uid: String) = dbFactory.dbQuery {
 		FavoriteTable.select {
 			FavoriteTable.uid.eq(uid)

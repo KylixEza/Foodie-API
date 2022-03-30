@@ -85,6 +85,26 @@ class UserRoute(
 		}
 	}
 	
+	private fun Route.deleteFavoriteByUser() {
+		delete<UserRouteLocation.FavoriteDeleteRoute> {
+			val uid = try {
+				call.parameters["uid"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@delete
+			}
+			
+			val body = try {
+				call.receive<FavoriteBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@delete
+			}
+			
+			call.generalSuccess { repository.deleteFavorite(uid!!, body) }
+		}
+	}
+	
 	private fun Route.getFavoritesByUser() {
 		get<UserRouteLocation.FavoriteGetListRoute> {
 			val uid = try {
@@ -194,6 +214,7 @@ class UserRoute(
 			getDetailUser()
 			updateUser()
 			addNewFavoriteByUser()
+			deleteFavoriteByUser()
 			getFavoritesByUser()
 			getLeaderboard()
 			getTransactionsByUser()

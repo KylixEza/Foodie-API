@@ -37,6 +37,7 @@ interface IFoodieRepository {
 	suspend fun updateUser(uid: String, body: UserBody) //clear
 	suspend fun getLeaderboard(): List<LeaderBoardResponse>  //clear
 	suspend fun addFavorite(uid: String, body: FavoriteBody) //clear
+	suspend fun deleteFavorite(uid: String, body: FavoriteBody) //tested
 	suspend fun getAllFavoritesByUser(uid: String): List<FavoriteResponse> //clear
 	suspend fun addNewCoupon(body: CouponBody) //clear
 	suspend fun getAllCoupons(): List<CouponResponse> //clear
@@ -73,6 +74,6 @@ interface IFoodieRepository {
 	suspend fun addNewChallenge(body: ChallengeBody) //clear
 	suspend fun joinChallenge(challengeId: String, body: ChallengeUserBody) //clear
 	suspend fun getAllAvailableChallenge(body: ChallengeUserBody): List<ChallengeResponse?> //clear
-	suspend fun addNewChallengeMenu(body: ChallengeMenuBody)
-	suspend fun getDetailChallenge(challengeId: String): List<ChallengeMenuResponse?>
+	suspend fun addNewChallengeMenu(body: ChallengeMenuBody) //clear
+	suspend fun getDetailChallenge(challengeId: String): List<ChallengeMenuResponse?> //clear
 }

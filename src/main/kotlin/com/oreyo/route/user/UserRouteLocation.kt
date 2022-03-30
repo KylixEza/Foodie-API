@@ -17,6 +17,8 @@ class UserRouteLocation {
 		const val POST_FAVORITE = "$SELECTED_USER/favorite"
 		//GET
 		const val FAVORITES = "$SELECTED_USER/favorite"
+		//DELETE
+		const val DELETE_FAVORITE = "$SELECTED_USER/favorite"
 		//GET
 		const val LEADERBOARD = "/leaderboard"
 		//GET
@@ -42,6 +44,9 @@ class UserRouteLocation {
 	
 	@Location(POST_FAVORITE)
 	data class FavoriteAddRoute(val uid: String)
+	
+	@Location(DELETE_FAVORITE)
+	data class FavoriteDeleteRoute(val uid: String)
 	
 	@Location(FAVORITES)
 	data class FavoriteGetListRoute(val uid: String)
