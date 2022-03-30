@@ -4,6 +4,8 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils
 import com.oreyo.data.database.DatabaseFactory
 import com.oreyo.data.table.*
 import com.oreyo.model.challenge.ChallengeBody
+import com.oreyo.model.challenge.ChallengeMenuBody
+import com.oreyo.model.challenge_user.ChallengeUserBody
 import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.favorite.FavoriteBody
 import com.oreyo.model.history.HistoryBody
@@ -26,6 +28,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.minus
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.plus
 import org.nield.kotlinstatistics.toNaiveBayesClassifier
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -36,6 +39,7 @@ class FoodieRepository(
 ): IFoodieRepository {
 	
 	override suspend fun addUser(body: UserBody) {
+		//INSERT INTO user VALUES ('${body.uid}', '${body.address}', ...)
 		dbFactory.dbQuery {
 			UserTable.insert { table ->
 				table[uid] = body.uid
@@ -457,7 +461,7 @@ class FoodieRepository(
 	override suspend fun addNewNote(body: NoteBody) {
 		var caloriesPredict = 0
 		CoroutineScope(Dispatchers.IO).launch {
-			caloriesPredict = getCaloriesPrediction(body).calories ?: 0
+			caloriesPredict = getCaloriesPrediction(body).calories
 		}.join()
 		
 		val dateObj = Date()
@@ -498,15 +502,94 @@ class FoodieRepository(
 				it[challengeId] = "CHALLENGE${NanoIdUtils.randomNanoId()}"
 				it[title] = body.title
 				it[description] = body.description
-				it[participant] = body.participant
+				it[participant] = 0
 				it[xpEarned] = body.xpEarned
 			}
 		}
 	}
 	
-	override suspend fun getAllAvailableChallenge() = dbFactory.dbQuery {
-		ChallengeTable.selectAll().mapNotNull { Mapper.mapRowToChallengeResponse(it) }
+	
+	override suspend fun joinChallenge(challengeId: String, body: ChallengeUserBody) {
+		dbFactory.dbQuery {
+			ChallengeUserTable.insert {
+				it[this.challengeId] = challengeId
+				it[uid] = body.uid
+			}
+			
+			val xpEarned = ChallengeTable
+				.select {
+					ChallengeTable.challengeId.eq(challengeId)
+				}.firstNotNullOf {
+					it[ChallengeTable.xpEarned]
+				}
+			
+			UserTable.update(where = {UserTable.uid.eq(body.uid)}) {
+				it[this.xp] = this.xp.plus(xpEarned)
+			}
+			
+			ChallengeTable.update(where = {ChallengeTable.challengeId.eq(challengeId)}) {
+				it[this.participant] = this.participant.plus(1)
+			}
+		}
 	}
+	
+	override suspend fun getAllAvailableChallenge(body: ChallengeUserBody) = dbFactory.dbQuery {
+		val participants = ChallengeUserTable.join(UserTable, JoinType.INNER) {
+			ChallengeUserTable.uid.eq(UserTable.uid)
+		}.slice(
+			ChallengeUserTable.uid,
+			ChallengeUserTable.challengeId,
+			UserTable.avatar
+		).selectAll().mapNotNull {
+			Mapper.mapRowToParticipantResponse(it)
+		}.groupBy {
+			it.challengeId
+		}
+		
+		ChallengeTable.join(ChallengeUserTable, JoinType.LEFT) {
+			ChallengeTable.challengeId.eq(ChallengeUserTable.challengeId) and ChallengeUserTable.uid.eq(body.uid)
+		}.slice(
+			ChallengeTable.challengeId,
+			ChallengeTable.title,
+			ChallengeTable.description,
+			ChallengeTable.participant,
+			ChallengeTable.xpEarned,
+			ChallengeUserTable.uid
+		).selectAll().map {
+			Mapper.mapRowToChallengeResponse(it, participants)
+		}
+	}
+	
+	override suspend fun addNewChallengeMenu(body: ChallengeMenuBody) {
+		dbFactory.dbQuery {
+			ChallengeMenuTable.insert {
+				it[challengeId] = body.challengeId
+				it[menuId] = body.menuId
+				it[type] = body.type
+			}
+		}
+	}
+	
+	override suspend fun getDetailChallenge(challengeId: String) = dbFactory.dbQuery {
+			val menus = getGeneralMenu()
+				.selectAll()
+				.groupBy(MenuTable.menuId)
+				.mapNotNull { Mapper.mapRowToMenuResponse(it) }
+				.groupBy {
+					it.menuId
+				}
+			
+			ChallengeMenuTable.join(MenuTable, JoinType.INNER) {
+				ChallengeMenuTable.menuId.eq(MenuTable.menuId)
+			}.slice(
+				ChallengeMenuTable.challengeId,
+				ChallengeMenuTable.type,
+				MenuTable.menuId
+			).selectAll().map {
+				Mapper.mapRowToChallengeMenuResponse(it, menus)
+			}
+		}
+	
 	
 	private fun String.splitWords() =  split(Regex("\\s")).asSequence()
 		.map { it.replace(Regex("[^A-Za-z]"),"").lowercase(Locale.getDefault()) }

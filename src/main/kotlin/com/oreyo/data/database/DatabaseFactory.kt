@@ -1,6 +1,7 @@
 package com.oreyo.data.database
 
 import com.oreyo.data.table.*
+import com.oreyo.model.challenge_user.ChallengeUserBody
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ class DatabaseFactory(
 			val tables = listOf(
 				FavoriteTable, IngredientTable, MenuTable, CouponTable, ReviewTable, StepTable,
 				HistoryTable, UserTable, VariantTable, VoucherTable, VoucherUserTable, NoteTable,
-				ChallengeTable
+				ChallengeTable, ChallengeUserTable, ChallengeMenuTable
 			)
 			tables.forEach { table ->
 				SchemaUtils.create(table)

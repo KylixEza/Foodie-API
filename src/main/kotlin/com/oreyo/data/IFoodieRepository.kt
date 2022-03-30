@@ -1,7 +1,10 @@
 package com.oreyo.data
 
 import com.oreyo.model.challenge.ChallengeBody
+import com.oreyo.model.challenge.ChallengeMenuBody
+import com.oreyo.model.challenge.ChallengeMenuResponse
 import com.oreyo.model.challenge.ChallengeResponse
+import com.oreyo.model.challenge_user.ChallengeUserBody
 import com.oreyo.model.coupon.CouponBody
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteBody
@@ -68,5 +71,8 @@ interface IFoodieRepository {
 	suspend fun addNewNote(body: NoteBody) //clear
 	suspend fun getAllNoteByUser(uid: String): List<NoteResponse> //clear
 	suspend fun addNewChallenge(body: ChallengeBody) //clear
-	suspend fun getAllAvailableChallenge(): List<ChallengeResponse>
+	suspend fun joinChallenge(challengeId: String, body: ChallengeUserBody) //clear
+	suspend fun getAllAvailableChallenge(body: ChallengeUserBody): List<ChallengeResponse?> //clear
+	suspend fun addNewChallengeMenu(body: ChallengeMenuBody)
+	suspend fun getDetailChallenge(challengeId: String): List<ChallengeMenuResponse?>
 }

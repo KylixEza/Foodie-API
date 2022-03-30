@@ -1,7 +1,10 @@
 package com.oreyo.route.challenge
 
 import com.oreyo.data.IFoodieRepository
+import com.oreyo.data.table.ChallengeMenuTable
 import com.oreyo.model.challenge.ChallengeBody
+import com.oreyo.model.challenge.ChallengeMenuBody
+import com.oreyo.model.challenge_user.ChallengeUserBody
 import com.oreyo.route.RouteResponseHelper.generalException
 import com.oreyo.route.RouteResponseHelper.generalListSuccess
 import com.oreyo.route.RouteResponseHelper.generalSuccess
@@ -17,8 +20,16 @@ class ChallengeRoute(
 ) {
 	
 	private fun Route.getAllAvailableChallenge() {
-		get<ChallengeRouteLocation.ChallengeGetListRoute> {
-			call.generalListSuccess { repository.getAllAvailableChallenge() }
+		get<ChallengeRouteLocation.ChallengeGetAvailableListRoute> {
+			
+			val body = try {
+				call.receive<ChallengeUserBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@get
+			}
+			
+			call.generalListSuccess { repository.getAllAvailableChallenge(body) }
 		}
 	}
 	
@@ -34,10 +45,57 @@ class ChallengeRoute(
 		}
 	}
 	
+	private fun Route.joinChallenge() {
+		post<ChallengeRouteLocation.ChallengeJoinRoute> {
+			val challengeId = try {
+				call.parameters["challengeId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			val body = try {
+				call.receive<ChallengeUserBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			
+			call.generalSuccess { repository.joinChallenge(challengeId!!, body) }
+		}
+	}
+	
+	private fun Route.postChallengeMenu() {
+		post<ChallengeRouteLocation.ChallengeMenuPostRoute> {
+			val body = try {
+				call.receive<ChallengeMenuBody>()
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@post
+			}
+			call.generalSuccess { repository.addNewChallengeMenu(body) }
+		}
+	}
+	
+	private fun Route.getDetailChallenge() {
+		get<ChallengeRouteLocation.ChallengeDetailRoute> {
+			val challengeId = try {
+				call.parameters["challengeId"]
+			} catch (e: Exception) {
+				call.generalException(e)
+				return@get
+			}
+			call.generalListSuccess { repository.getDetailChallenge(challengeId!!)}
+		}
+	}
+	
 	fun initChallengeRoute(route: Route) {
 		route.apply {
 			getAllAvailableChallenge()
 			postChallenge()
+			joinChallenge()
+			postChallengeMenu()
+			getDetailChallenge()
 		}
 	}
 	

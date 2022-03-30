@@ -1,7 +1,9 @@
 package com.oreyo.util
 
 import com.oreyo.data.table.*
+import com.oreyo.model.challenge.ChallengeMenuResponse
 import com.oreyo.model.challenge.ChallengeResponse
+import com.oreyo.model.challenge.ParticipantResponse
 import com.oreyo.model.coupon.CouponResponse
 import com.oreyo.model.favorite.FavoriteResponse
 import com.oreyo.model.history.HistoryResponse
@@ -207,7 +209,7 @@ object Mapper {
 		)
 	}
 	
-	fun mapRowToChallengeResponse(row: ResultRow?): ChallengeResponse? {
+	fun mapRowToChallengeResponse(row: ResultRow?, participants: Map<String, List<ParticipantResponse>>): ChallengeResponse? {
 		if (row == null)
 			return null
 		
@@ -215,8 +217,30 @@ object Mapper {
 			challengeId = row[ChallengeTable.challengeId],
 			title = row[ChallengeTable.title],
 			description = row[ChallengeTable.description],
-			participant = row[ChallengeTable.participant],
-			xpEarned = row[ChallengeTable.xpEarned]
+			participants = participants[row[ChallengeTable.challengeId]],
+			participantsCount = row[ChallengeTable.participant],
+			xpEarned = row[ChallengeTable.xpEarned],
+			isJoined = !row[ChallengeUserTable.uid].isNullOrEmpty()
+		)
+	}
+	
+	fun mapRowToParticipantResponse(row: ResultRow?): ParticipantResponse {
+		return ParticipantResponse(
+			uid = row?.get(ChallengeUserTable.uid).toString(),
+			challengeId = row?.get(ChallengeUserTable.challengeId).toString(),
+			avatar = row?.get(UserTable.avatar).toString()
+		)
+	}
+	
+	fun mapRowToChallengeMenuResponse(row: ResultRow?, menus: Map<String, List<MenuResponse>>): ChallengeMenuResponse? {
+		if (row == null)
+			return null
+		
+		return ChallengeMenuResponse(
+			challengeId = row[ChallengeMenuTable.challengeId],
+			menuId = row[MenuTable.menuId],
+			type = row[ChallengeMenuTable.type],
+			menus = menus[row[MenuTable.menuId]]
 		)
 	}
 	

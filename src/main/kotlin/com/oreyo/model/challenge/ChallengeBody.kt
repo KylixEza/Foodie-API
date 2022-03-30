@@ -9,9 +9,6 @@ data class ChallengeBody(
 	@field:SerializedName("description")
 	val description: String,
 	
-	@field:SerializedName("participant")
-	val participant: Int,
-	
 	@field:SerializedName("xp_earned")
 	val xpEarned: Int,
 )
