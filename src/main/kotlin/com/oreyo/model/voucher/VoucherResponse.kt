@@ -10,8 +10,8 @@ data class VoucherResponse(
 	@field:SerializedName("background")
 	val background: String,
 	
-	@field:SerializedName("coin_cost")
-	val coinCost: Int,
+	@field:SerializedName("xp_cost")
+	val xpCost: Int,
 	
 	@field:SerializedName("valid_until")
 	val validUntil: String,

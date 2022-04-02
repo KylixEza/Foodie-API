@@ -64,7 +64,7 @@ object Mapper {
 			image = row[MenuTable.image],
 			ordered = row[MenuTable.ordered],
 			price = row[MenuTable.price],
-			rating = row[Avg(ReviewTable.rating, 1).alias("rating")],
+			rating = row[Avg(ReviewTable.rating, 1).alias("rating")]?.toDouble(),
 			title = row[MenuTable.title],
 			type = row[MenuTable.category],
 			videoUrl = row[MenuTable.videoUrl]
@@ -130,28 +130,37 @@ object Mapper {
 		)
 	}
 	
-	fun mapRowToHistoryResponse(row: ResultRow?): HistoryResponse? {
+	fun mapRowToHistoryResponse(row: ResultRow?, ratings: List<MutableMap<String, Double?>>): HistoryResponse? {
 		if (row == null) {
 			return null
 		}
 		
-		return HistoryResponse(
+		val history = HistoryResponse(
 			transactionId = row[HistoryTable.transactionId],
 			menuId = row[MenuTable.menuId],
 			timeStamp = row[HistoryTable.timeStamp],
 			title = row[MenuTable.title],
 			image = row[MenuTable.image],
+			rating = 0.0,
 			variant = row[VariantTable.variant],
 			status = row[HistoryTable.status],
 			starsGiven = row[HistoryTable.starsGiven]
 		)
+		
+		ratings.forEach {
+			if (it.keys.contains(row[MenuTable.menuId])) {
+				history.rating = it[row[MenuTable.menuId]]!!
+			}
+		}
+		
+		return history
 	}
 	
 	fun mapRowToVoucherResponse(row: ResultRow): VoucherResponse {
 		return VoucherResponse(
 			voucherId = row[VoucherTable.voucherId],
 			background = row[VoucherTable.background],
-			coinCost = row[VoucherTable.xpCost],
+			xpCost = row[VoucherTable.xpCost],
 			validUntil = row[VoucherTable.validUntil],
 			voucherCategory = row[VoucherTable.voucherCategory],
 			voucherDiscount = row[VoucherTable.voucherDiscount]

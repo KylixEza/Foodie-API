@@ -390,25 +390,40 @@ class FoodieRepository(
 	}
 	
 	override suspend fun getAllHistoryByUser(uid: String) = dbFactory.dbQuery {
-			HistoryTable.join(MenuTable, JoinType.INNER) {
-				HistoryTable.menuId.eq(MenuTable.menuId)
-			}.join(VariantTable, JoinType.INNER) {
-				VariantTable.variant.eq(HistoryTable.variant)
-			}.slice(
-				HistoryTable.transactionId,
-				MenuTable.menuId,
-				MenuTable.image,
-				MenuTable.title,
-				HistoryTable.timeStamp,
-				VariantTable.variant,
-				HistoryTable.status,
-				HistoryTable.starsGiven
-			).select {
-				HistoryTable.uid.eq(uid)
-			}.mapNotNull {
-				Mapper.mapRowToHistoryResponse(it)
-			}
+		
+		val maps = mutableMapOf<String, Double?>()
+		
+		val ratings = MenuTable.join(ReviewTable, JoinType.LEFT) {
+			MenuTable.menuId.eq(ReviewTable.menuId)
+		}.slice(
+			MenuTable.menuId,
+			Avg(ReviewTable.rating, 1).alias("rating"),
+		).select {
+			ReviewTable.uid.eq(uid)
+		}.groupBy(MenuTable.menuId).mapNotNull {
+			maps[it[MenuTable.menuId]] = it[Avg(ReviewTable.rating, 1).alias("rating")]?.toDouble()
+			maps
 		}
+		
+		HistoryTable.join(MenuTable, JoinType.INNER) {
+			HistoryTable.menuId.eq(MenuTable.menuId)
+		}.join(VariantTable, JoinType.INNER) {
+			VariantTable.variant.eq(HistoryTable.variant)
+		}.slice(
+			HistoryTable.transactionId,
+			MenuTable.menuId,
+			MenuTable.image,
+			MenuTable.title,
+			HistoryTable.timeStamp,
+			VariantTable.variant,
+			HistoryTable.status,
+			HistoryTable.starsGiven
+		).select {
+			HistoryTable.uid.eq(uid)
+		}.mapNotNull {
+			Mapper.mapRowToHistoryResponse(it, ratings)
+		}
+	}
 	
 	
 	override suspend fun addNewVoucher(body: VoucherBody) {

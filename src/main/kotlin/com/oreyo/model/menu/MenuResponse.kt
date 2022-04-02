@@ -36,7 +36,7 @@ data class MenuResponse(
 	val price: Int,
 	
 	@field:SerializedName("rating")
-	val rating: BigDecimal?,
+	val rating: Double?,
 	
 	@field:SerializedName("title")
 	val title: String,

@@ -19,6 +19,9 @@ data class HistoryResponse(
 	@field:SerializedName("image")
 	val image: String,
 	
+	@field:SerializedName("rating")
+	var rating: Double,
+	
 	@field:SerializedName("variant")
 	val variant: String,
 	
