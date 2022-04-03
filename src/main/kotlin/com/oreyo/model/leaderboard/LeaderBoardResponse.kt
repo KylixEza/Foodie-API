@@ -10,6 +10,9 @@ data class LeaderBoardResponse(
 	@field:SerializedName("name")
 	val name: String,
 	
+	@field:SerializedName("avatar_url")
+	val avatarUrl: String,
+	
 	@field:SerializedName("xp")
 	val xp: Int
 )

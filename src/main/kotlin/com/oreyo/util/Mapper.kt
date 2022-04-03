@@ -45,6 +45,7 @@ object Mapper {
 		return LeaderBoardResponse(
 			uid = row[UserTable.uid],
 			name = row[UserTable.name],
+			avatarUrl = row[UserTable.avatar],
 			xp = row[UserTable.xp]
 		)
 	}
@@ -171,7 +172,7 @@ object Mapper {
 		return VoucherUserResponse(
 			voucherId = row[VoucherUserTable.voucherId],
 			background = row[VoucherTable.background],
-			coinCost = row[VoucherTable.xpCost],
+			xpCost = row[VoucherTable.xpCost],
 			validUntil = row[VoucherTable.validUntil],
 			voucherCategory = row[VoucherTable.voucherCategory],
 			voucherDiscount = row[VoucherTable.voucherDiscount]
